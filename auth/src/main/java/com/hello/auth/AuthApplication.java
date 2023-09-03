@@ -1,13 +1,13 @@
-package com.hello.mypay;
+package com.hello.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MyPayApplication {
+public class AuthApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MyPayApplication.class, args);
+		SpringApplication.run(AuthApplication.class, args);
 	}
 
 }
