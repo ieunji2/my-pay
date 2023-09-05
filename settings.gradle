@@ -1,0 +1,5 @@
+rootProject.name = 'my-pay'
+
+include 'api-gateway'
+include 'account-service'
+include 'money-service'
