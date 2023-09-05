@@ -1,12 +1,12 @@
-package com.hello.money;
+package com.hello.apigateway;
 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MoneyApplication {
+public class ApiGatewayApplication {
   public static void main(String[] args) {
-    SpringApplication.run(MoneyApplication.class, args);
+    SpringApplication.run(ApiGatewayApplication.class, args);
   }
 }
