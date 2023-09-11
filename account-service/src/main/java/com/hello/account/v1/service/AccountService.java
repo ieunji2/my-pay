@@ -18,44 +18,30 @@ public class AccountService {
 
   @Transactional
   public AccountResponse registerAccount(final RegisterAccountRequest request) {
-    final Account account = new Account(request.name(), request.email());
-    final Account savedAccount = accountPort.saveAccount(account);
-    return new AccountResponse(
-            savedAccount.getId(),
-            savedAccount.getName(),
-            savedAccount.getEmail(),
-            savedAccount.isValid());
+    final Account account = new Account(
+            request.name(),
+            request.email());
+    return AccountResponse.from(accountPort.saveAccount(account));
   }
 
   public AccountResponse findAccount(final Long accountId) {
-    final Account account = accountPort.findAccountById(accountId);
-    return new AccountResponse(
-            account.getId(),
-            account.getName(),
-            account.getEmail(),
-            account.isValid());
+    return AccountResponse.from(accountPort.findAccountById(accountId));
   }
 
   @Transactional
   public AccountResponse modifyAccount(final Long accountId, final ModifyAccountRequest request) {
     final Account account = accountPort.findAccountById(accountId);
-    account.modify(request.name(), request.email(), request.isValid());
-    final Account savedAccount = accountPort.saveAccount(account);
-    return new AccountResponse(
-            savedAccount.getId(),
-            savedAccount.getName(),
-            savedAccount.getEmail(),
-            savedAccount.isValid());
+    account.modify(
+            request.name(),
+            request.email(),
+            request.isValid());
+    return AccountResponse.from(accountPort.saveAccount(account));
   }
 
   @Transactional
   public AccountResponse removeAccount(final Long accountId) {
     final Account account = accountPort.findAccountById(accountId);
     accountPort.removeAccount(account);
-    return new AccountResponse(
-            account.getId(),
-            account.getName(),
-            account.getEmail(),
-            account.isValid());
+    return AccountResponse.from(account);
   }
 }

@@ -34,7 +34,7 @@ public class AccountSteps {
   }
 
   public static ModifyAccountRequest 계정수정요청_생성() {
-    return new ModifyAccountRequest("이름 수정", "이메일 수정", true);
+    return new ModifyAccountRequest("이름 수정", "이메일 수정", false);
   }
 
   static ExtractableResponse<Response> 계정수정요청(final Long accountId) {

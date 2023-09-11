@@ -24,6 +24,8 @@ public class Auth {
 
   private String accessToken;
 
+  private LocalDateTime expiredAt;
+
   @CreatedDate
   @Column(updatable = false)
   private LocalDateTime createdAt;
