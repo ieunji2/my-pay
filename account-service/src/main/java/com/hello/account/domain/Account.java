@@ -27,7 +27,7 @@ public class Account extends BaseEntity {
     this.isValid = true;
   }
 
-  public void modify(final String name, final String email, final boolean isValid) {
+  public void updateAccount(final String name, final String email, final boolean isValid) {
     Assert.hasText(name, "이름은 필수입니다.");
     Assert.hasText(email, "이메일은 필수입니다.");
     this.name = name;

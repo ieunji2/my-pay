@@ -29,7 +29,7 @@ public class AccountService {
   @Transactional
   public AccountResponse modifyAccount(final Long accountId, final ModifyAccountRequest request) {
     final Account account = accountPort.findAccountById(accountId);
-    account.modify(
+    account.updateAccount(
             request.name(),
             request.email(),
             request.isValid());

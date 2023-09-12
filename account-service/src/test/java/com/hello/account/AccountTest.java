@@ -8,10 +8,10 @@ import static org.assertj.core.api.Assertions.*;
 class AccountTest {
 
   @Test
-  void modify() {
+  void updateAccount() {
     final Account account = new Account("이름", "이메일");
 
-    account.modify("이름 수정", "이메일 수정", false);
+    account.updateAccount("이름 수정", "이메일 수정", false);
 
     assertThat(account.getName()).isEqualTo("이름 수정");
     assertThat(account.getEmail()).isEqualTo("이메일 수정");
