@@ -1,23 +1,17 @@
 package com.hello.account.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "auth_tokens")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class Auth {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class Auth extends BaseEntity {
 
   @OneToOne
   private Account account;
@@ -25,12 +19,4 @@ public class Auth {
   private String accessToken;
 
   private LocalDateTime expiredAt;
-
-  @CreatedDate
-  @Column(updatable = false)
-  private LocalDateTime createdAt;
-
-  @LastModifiedDate
-  @Column(updatable = false)
-  private LocalDateTime updatedAt;
 }
