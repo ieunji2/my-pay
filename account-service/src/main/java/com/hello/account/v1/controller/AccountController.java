@@ -4,17 +4,15 @@ import com.hello.account.v1.dto.AccountResponse;
 import com.hello.account.v1.dto.ModifyAccountRequest;
 import com.hello.account.v1.dto.RegisterAccountRequest;
 import com.hello.account.v1.service.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/accounts")
 public class AccountController {
 
   private final AccountService accountService;
-
-  public AccountController(final AccountService accountService) {
-    this.accountService = accountService;
-  }
 
   @PostMapping
   public AccountResponse registerAccount(@RequestBody final RegisterAccountRequest request) {

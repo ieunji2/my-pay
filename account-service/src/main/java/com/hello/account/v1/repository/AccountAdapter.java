@@ -2,15 +2,14 @@ package com.hello.account.v1.repository;
 
 import com.hello.account.domain.Account;
 import com.hello.account.v1.service.AccountPort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 class AccountAdapter implements AccountPort {
-  private final AccountRepository accountRepository;
 
-  AccountAdapter(final AccountRepository accountRepository) {
-    this.accountRepository = accountRepository;
-  }
+  private final AccountRepository accountRepository;
 
   @Override
   public Account saveAccount(final Account account) {

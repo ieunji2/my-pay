@@ -4,17 +4,15 @@ import com.hello.account.domain.Account;
 import com.hello.account.v1.dto.AccountResponse;
 import com.hello.account.v1.dto.ModifyAccountRequest;
 import com.hello.account.v1.dto.RegisterAccountRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 @Service
 public class AccountService {
 
   private final AccountPort accountPort;
-
-  public AccountService(final AccountPort accountPort) {
-    this.accountPort = accountPort;
-  }
 
   @Transactional
   public AccountResponse registerAccount(final RegisterAccountRequest request) {
