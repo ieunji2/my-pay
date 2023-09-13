@@ -19,7 +19,7 @@ class AccountAdapter implements AccountPort {
   @Override
   public Account findAccountById(final Long accountId) {
     return accountRepository.findById(accountId)
-            .orElseThrow(() -> new IllegalArgumentException("계정이 존재하지 않습니다."));
+                            .orElseThrow(() -> new IllegalArgumentException("계정이 존재하지 않습니다."));
   }
 
   @Override
