@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.*;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
@@ -19,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGatewayFilter.Config> {
 
+  private static final String AUTH_URL = "http://localhost:9000/v1/auth/check";
+
   private final RestTemplate restTemplate;
 
   public PreAuthGatewayFilter(final RestTemplate restTemplate) {
@@ -30,57 +30,99 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
   public GatewayFilter apply(final Config config) {
 
     return (exchange, chain) -> {
+      log.info("Request Id -> {}", exchange.getRequest().getId());
 
-      final ServerHttpRequest request = exchange.getRequest();
-      log.info("request Id -> {}", request.getId());
+      final String token = getToken(exchange);
+      final ResponseAuth responseAuth = verifyToken(exchange, token);
+      rebuildRequestHeader(exchange, responseAuth);
 
-      if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-        return onError(exchange, "no authorization header", HttpStatus.UNAUTHORIZED);
-      }
-
-      final String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-      if (!authorizationHeader.startsWith("Bearer ")) {
-        return onError(exchange, "not a valid token format", HttpStatus.UNAUTHORIZED);
-      }
-
-      final ResponseEntity<ResponseAuth> responseEntity = restTemplate.exchange(
-              "http://localhost:9000/v1/auth/check",
-              HttpMethod.GET,
-              getAuthHeaderEntity(authorizationHeader),
-              ResponseAuth.class);
-
-      if (responseEntity.getStatusCode().isError()) {
-        return onError(exchange, "http communication error", HttpStatus.INTERNAL_SERVER_ERROR);
-      } else {
-        final ResponseAuth responseAuth = responseEntity.getBody();
-
-        if (!responseAuth.isValid()) {
-          return onError(exchange, "auth token is not valid", HttpStatus.UNAUTHORIZED);
-        }
-
-        final String encodedId = URLEncoder.encode(String.valueOf(responseAuth.id()), StandardCharsets.UTF_8);
-        final String encodedName = URLEncoder.encode(responseAuth.name(), StandardCharsets.UTF_8);
-        exchange.getRequest().mutate()
-                .header("x-account-id", encodedId)
-                .header("x-account-name", encodedName)
-                .build();
-      }
-
-      return chain.filter(exchange);
+      return exchange.getResponse().isCommitted() ? setResponseComplete(exchange) : chain.filter(exchange);
     };
   }
 
-  private HttpEntity getAuthHeaderEntity(final String authorizationHeader) {
+  private String getToken(final ServerWebExchange exchange) {
+
+    final HttpHeaders headers = exchange.getRequest().getHeaders();
+
+    if (!headers.containsKey(HttpHeaders.AUTHORIZATION)) {
+      onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+    }
+
+    final String bearer = "Bearer ";
+    if (!headers.get(HttpHeaders.AUTHORIZATION).get(0).startsWith(bearer)) {
+      onError(exchange, "Not a valid token format", HttpStatus.UNAUTHORIZED);
+    }
+
+    return headers.get(HttpHeaders.AUTHORIZATION).get(0).replace(bearer, "");
+  }
+
+  private ResponseAuth verifyToken(final ServerWebExchange exchange, final String token) {
+
+    final ResponseEntity<ResponseAuth> responseEntity = getExchange(token);
+
+    if (responseEntity.getStatusCode().isError()) {
+      onError(exchange, "HTTP communication error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    final ResponseAuth responseAuth = responseEntity.getBody();
+    if (!responseAuth.isValid()) {
+      onError(exchange, "Authentication token invalid", HttpStatus.UNAUTHORIZED);
+    }
+
+    return responseAuth;
+  }
+
+  private ResponseEntity<ResponseAuth> getExchange(final String token) {
+    return restTemplate.exchange(
+            AUTH_URL,
+            HttpMethod.GET,
+            getAuthHeaderEntity(token),
+            ResponseAuth.class);
+  }
+
+  private HttpEntity<?> getAuthHeaderEntity(final String token) {
     final HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(authorizationHeader.replace("Bearer ", ""));
+    headers.setBearerAuth(token);
     return new HttpEntity<>(headers);
   }
 
-  private Mono<Void> onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
-    log.error("onError -> {}, {}", httpStatus, errorMessage);
-    final ServerHttpResponse response = exchange.getResponse();
-    response.setStatusCode(httpStatus);
-    return response.setComplete();
+  private void rebuildRequestHeader(final ServerWebExchange exchange, final ResponseAuth responseAuth) {
+    removeAuthorizationHeader(exchange);
+    setAuthenticatedUserHeader(exchange, responseAuth);
+  }
+
+  private void removeAuthorizationHeader(final ServerWebExchange exchange) {
+    final HttpHeaders headers = HttpHeaders.writableHttpHeaders(exchange.getRequest().getHeaders());
+    headers.remove(HttpHeaders.AUTHORIZATION);
+  }
+
+  private void setAuthenticatedUserHeader(final ServerWebExchange exchange, final ResponseAuth responseAuth) {
+    exchange.getRequest()
+            .mutate()
+            .header("x-account-id", encode(String.valueOf(responseAuth.id())))
+            .header("x-account-name", encode(responseAuth.name()))
+            .build();
+  }
+
+  private String encode(String value) {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8);
+  }
+
+  private void onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
+    log.error("Error -> {}, {}", httpStatus, errorMessage);
+
+    setResponseStatusCode(exchange, httpStatus);
+    setResponseComplete(exchange);
+  }
+
+  private void setResponseStatusCode(final ServerWebExchange exchange, final HttpStatus httpStatus) {
+    exchange.getResponse()
+            .setStatusCode(httpStatus);
+  }
+
+  private Mono<Void> setResponseComplete(final ServerWebExchange exchange) {
+    return exchange.getResponse()
+                   .setComplete();
   }
 
   public static class Config {
