@@ -43,11 +43,4 @@ class PreAuthGatewayFilterTest {
     assertThat(exchange.getRequest().getHeaders().get("x-account-id")).contains(String.valueOf(id));
     assertThat(exchange.getRequest().getHeaders().get("x-account-name")).contains(name);
   }
-
-  @Test
-  @DisplayName("헤더에 한글이 있으면 chain filter 시 오류가 발생한다")
-  void mutateHttpRequestHeaderAndChainFilter() {
-
-    //TODO
-  }
 }
