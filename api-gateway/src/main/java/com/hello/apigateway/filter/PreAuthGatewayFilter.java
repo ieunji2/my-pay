@@ -32,11 +32,15 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
     return (exchange, chain) -> {
       log.info("Request Id -> {}", exchange.getRequest().getId());
 
-      final String token = getToken(exchange);
-      final ResponseAuth responseAuth = verifyToken(exchange, token);
-      rebuildRequestHeader(exchange, responseAuth);
+      try {
+        final String token = getToken(exchange);
+        final ResponseAuth responseAuth = verifyToken(exchange, token);
+        rebuildRequestHeader(exchange, responseAuth);
+      } catch (Exception e) {
+        return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+      }
 
-      return exchange.getResponse().isCommitted() ? setResponseComplete(exchange) : chain.filter(exchange);
+      return chain.filter(exchange);
     };
   }
 
@@ -45,12 +49,12 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
     final HttpHeaders headers = exchange.getRequest().getHeaders();
 
     if (!headers.containsKey(HttpHeaders.AUTHORIZATION)) {
-      onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+      throw new RuntimeException("No authorization header");
     }
 
     final String bearer = "Bearer ";
     if (!headers.get(HttpHeaders.AUTHORIZATION).get(0).startsWith(bearer)) {
-      onError(exchange, "Not a valid token format", HttpStatus.UNAUTHORIZED);
+      throw new RuntimeException("Not a valid token format");
     }
 
     return headers.get(HttpHeaders.AUTHORIZATION).get(0).replace(bearer, "");
@@ -61,12 +65,12 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
     final ResponseEntity<ResponseAuth> responseEntity = getExchange(token);
 
     if (responseEntity.getStatusCode().isError()) {
-      onError(exchange, "HTTP communication error", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new RuntimeException("HTTP communication error");
     }
 
     final ResponseAuth responseAuth = responseEntity.getBody();
     if (!responseAuth.isValid()) {
-      onError(exchange, "Authentication token invalid", HttpStatus.UNAUTHORIZED);
+      throw new RuntimeException("Authentication token invalid");
     }
 
     return responseAuth;
@@ -108,11 +112,11 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 
-  private void onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
+  private Mono<Void> onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
     log.error("Error -> {}, {}", httpStatus, errorMessage);
 
     setResponseStatusCode(exchange, httpStatus);
-    setResponseComplete(exchange);
+    return setResponseComplete(exchange);
   }
 
   private void setResponseStatusCode(final ServerWebExchange exchange, final HttpStatus httpStatus) {
