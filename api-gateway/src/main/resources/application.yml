@@ -1,20 +1,28 @@
 spring:
   application:
     name: api-gateway
+
   cloud:
     gateway:
       routes:
         - id: account-service
           uri: http://localhost:9000/
           predicates:
-            - Path=/account/**
+            - Path=/accounts/**
           filters:
-            - RewritePath=/account/?(?<segment>.*), /$\{segment}
+            - RewritePath=/accounts/?(?<segment>.*), /$\{segment}
         - id: money-service
           uri: http://localhost:10000/
           predicates:
-            - Path=/money/**
+            - Path=/moneys/health/ping
+            - Method=GET
           filters:
-            - RewritePath=/money/?(?<segment>.*), /$\{segment}
+            - RewritePath=/moneys/?(?<segment>.*), /$\{segment}
+        - id: money-service
+          uri: http://localhost:10000/
+          predicates:
+            - Path=/moneys/**
+          filters:
+            - RewritePath=/moneys/?(?<segment>.*), /$\{segment}
             - PreAuthGatewayFilter
             - PostAuthGatewayFilter
