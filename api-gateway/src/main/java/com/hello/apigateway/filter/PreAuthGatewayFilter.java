@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGatewayFilter.Config> {
 
-  private static final String AUTH_URL = "http://localhost:9000/v1/auth/check";
+  private static final String AUTH_URL = "http://localhost:9000/v1/auths/check";
 
   private final RestTemplate restTemplate;
 
@@ -114,19 +114,12 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
 
   private Mono<Void> onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
     log.error("Error -> {}, {}", httpStatus, errorMessage);
-
-    setResponseStatusCode(exchange, httpStatus);
-    return setResponseComplete(exchange);
+    return getErrorResponse(exchange, httpStatus);
   }
 
-  private void setResponseStatusCode(final ServerWebExchange exchange, final HttpStatus httpStatus) {
-    exchange.getResponse()
-            .setStatusCode(httpStatus);
-  }
-
-  private Mono<Void> setResponseComplete(final ServerWebExchange exchange) {
-    return exchange.getResponse()
-                   .setComplete();
+  private Mono<Void> getErrorResponse(final ServerWebExchange exchange, final HttpStatus httpStatus) {
+    exchange.getResponse().setStatusCode(httpStatus);
+    return exchange.getResponse().setComplete();
   }
 
   public static class Config {
