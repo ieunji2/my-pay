@@ -2,6 +2,7 @@ buildscript {
     ext {
         set('springframeworkBootPlugin', Versions.springframeworkBootPlugin)
         set('springDependencyManagementPlugin', Versions.springDependencyManagementPlugin)
+        set('asciidoctorPlugin', Versions.asciidoctorPlugin)
     }
 }
 
@@ -9,6 +10,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version "$springframeworkBootPlugin"
     id 'io.spring.dependency-management' version "$springDependencyManagementPlugin"
+    id "org.asciidoctor.jvm.convert" version "$asciidoctorPlugin"
 }
 
 group = 'com.hello.account'
@@ -22,6 +24,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 repositories {
@@ -40,8 +43,40 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured'
+
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
 }
 
-tasks.named('test') {
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
     useJUnitPlatform()
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    baseDirFollowsSourceFile()
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+task createDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+bootJar {
+    dependsOn createDocument
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }

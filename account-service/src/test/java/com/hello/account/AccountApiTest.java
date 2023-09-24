@@ -27,7 +27,7 @@ public class AccountApiTest extends ApiTest {
   }
 
   void 계정을_등록한다() {
-    final var response = AccountSteps.계정등록요청(AccountSteps.계정등록요청_생성());
+    final var response = AccountSteps.계정등록요청(AccountSteps.계정등록요청_생성(), spec);
     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
   }
 
@@ -41,7 +41,7 @@ public class AccountApiTest extends ApiTest {
   @MethodSource("accountIdParam")
   @DisplayName("계정을 조회한다")
   void findAccount(final Long accountId) {
-    final var response = AccountSteps.계정조회요청(accountId);
+    final var response = AccountSteps.계정조회요청(accountId, spec);
     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     assertThat(response.jsonPath().getString("name")).isEqualTo("이름");
   }
@@ -50,7 +50,7 @@ public class AccountApiTest extends ApiTest {
   @MethodSource("accountIdParam")
   @DisplayName("계정을 수정한다")
   void modifyAccount(final Long accountId) {
-    final var response = AccountSteps.계정수정요청(accountId);
+    final var response = AccountSteps.계정수정요청(accountId, spec);
     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     assertThat(accountRepository.findById(accountId).get().getName()).isEqualTo("이름 수정");
   }
@@ -59,7 +59,7 @@ public class AccountApiTest extends ApiTest {
   @MethodSource("accountIdParam")
   @DisplayName("계정을 삭제한다")
   void removeAccount(final Long accountId) {
-    final var response = AccountSteps.계정삭제요청(accountId);
+    final var response = AccountSteps.계정삭제요청(accountId, spec);
     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     assertThat(accountRepository.findById(accountId)).isEmpty();
   }
