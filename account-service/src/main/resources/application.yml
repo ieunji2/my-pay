@@ -5,20 +5,15 @@ spring:
   application:
     name: account-service
 
+  profiles:
+    active: local
+
   jpa:
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
         #show_sql: true
         format_sql: true
         highlight_sql: true
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/mypay_account
-    username: myuser
-    password: P@ssw0rd
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
 logging.level:
   org.hibernate.SQL: debug
