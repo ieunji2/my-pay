@@ -1,0 +1,15 @@
+== 계정(Account)
+
+계정에 대한 기능을 제공합니다.
+
+=== 계정등록
+operation::account-api-test/register-account[snippets='http-request,http-response,request-fields,response-fields']
+
+=== 계정조회
+operation::account-api-test/find-account[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 계정수정
+operation::account-api-test/modify-account[snippets='http-request,http-response,path-parameters,request-fields,response-fields']
+
+=== 계정삭제
+operation::account-api-test/remove-account[snippets='http-request,http-response,path-parameters,response-fields']

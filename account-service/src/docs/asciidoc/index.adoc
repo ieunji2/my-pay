@@ -1,0 +1,19 @@
+= My Pay Application Document
+:toc: left
+:toc-title: 목차
+:toclevels: 2
+:sectlinks:
+:sectnums:
+:source-highlighter: highlightjs
+
+== 개요
+
+Account Service의 API 문서입니다.
+
+== API
+
+//계정
+include::accounts.adoc[]
+
+//인증
+include::auths.adoc[]
