@@ -12,13 +12,14 @@ public class WalletRepository {
   private Long sequence = 0L;
 
   public Wallet save(final Wallet wallet) {
-    wallet.assignId(++sequence);
+    if (null == wallet.getId()) {
+      wallet.assignId(++sequence);
+    }
     persistence.put(wallet.getId(), wallet);
     return persistence.get(sequence);
   }
 
   public Wallet findWalletByAccountId(final Long accountId) {
-    save(new Wallet(accountId));
     return persistence.get(sequence);
   }
 

@@ -11,7 +11,6 @@ public class Wallet {
 
   public Wallet(final Long accountId) {
     Assert.notNull(accountId, "계정 ID는 필수입니다.");
-    this.id = 1L;
     this.accountId = accountId;
     this.balance = BigInteger.ZERO;
   }

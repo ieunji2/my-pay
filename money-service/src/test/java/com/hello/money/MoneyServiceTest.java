@@ -4,13 +4,14 @@ import com.hello.money.v1.dto.AddMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
 import com.hello.money.v1.repository.WalletRepository;
 import com.hello.money.v1.service.MoneyService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class MoneyServiceTest {
@@ -32,9 +33,9 @@ class MoneyServiceTest {
 
     final WalletResponse response = moneyService.createWallet(accountId);
 
-    Assertions.assertThat(response.id()).isEqualTo(1L);
-    Assertions.assertThat(response.accountId()).isEqualTo(accountId);
-    Assertions.assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
   }
 
   @Test
@@ -43,9 +44,9 @@ class MoneyServiceTest {
 
     final WalletResponse response = moneyService.getWallet(accountId);
 
-    Assertions.assertThat(response.id()).isEqualTo(1L);
-    Assertions.assertThat(response.accountId()).isEqualTo(accountId);
-    Assertions.assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
   }
 
   @Test
@@ -56,8 +57,8 @@ class MoneyServiceTest {
 
     final WalletResponse response = moneyService.addMoney(accountId, request);
 
-    Assertions.assertThat(response.id()).isEqualTo(1L);
-    Assertions.assertThat(response.accountId()).isEqualTo(accountId);
-    Assertions.assertThat(response.balance()).isEqualTo(amount);
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.balance()).isEqualTo(amount);
   }
 }

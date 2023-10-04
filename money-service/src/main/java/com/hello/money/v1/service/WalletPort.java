@@ -4,7 +4,7 @@ import com.hello.money.domain.Wallet;
 
 public interface WalletPort {
 
-  Wallet saveWallet(Wallet wallet);
+  Wallet saveWallet(final Wallet wallet);
 
-  Wallet findWalletByAccountId(Long accountId);
+  Wallet findWalletByAccountId(final Long accountId);
 }
