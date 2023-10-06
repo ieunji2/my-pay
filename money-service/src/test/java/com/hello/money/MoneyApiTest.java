@@ -1,39 +1,41 @@
 package com.hello.money;
 
 import com.hello.money.v1.dto.AddMoneyRequest;
-import com.hello.money.v1.repository.WalletRepository;
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class MoneyApiTest extends ApiTest {
 
-  @Autowired
-  private WalletRepository walletRepository;
-
-  @BeforeEach
-  void setUp() {
-    super.setUp();
-    walletRepository.deleteAll();
+  private static Stream<Arguments> accountIdParam() {
+    return Stream.of(
+            arguments(1L)
+    );
   }
 
-  @Test
-  @DisplayName("인증된 계정의 아이디로 지갑을 생성한다")
-  void createWallet() {
-    //given
-    final Long accountId = 1L;
+  private static Stream<Arguments> addMoneyRequestParam() {
+    return Stream.of(
+            arguments(1L, new AddMoneyRequest(BigInteger.valueOf(3000), "적요"))
+    );
+  }
 
-    //when
+  @ParameterizedTest
+  @MethodSource("accountIdParam")
+  @DisplayName("인증된 계정의 아이디로 지갑을 생성한다")
+  void createWallet(final Long accountId) {
+    //given, when
     final var response = RestAssured.given().log().all()
                                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                                     .header("x-account-id", encode(String.valueOf(accountId)))
@@ -48,12 +50,12 @@ class MoneyApiTest extends ApiTest {
     assertThat(response.jsonPath().getString("balance")).isEqualTo("0");
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("accountIdParam")
   @DisplayName("인증된 계정의 아이디로 지갑을 조회한다")
-  void getWallet() {
+  void getWallet(final Long accountId) {
     //given
-    createWallet();
-    final Long accountId = 1L;
+    createWallet(accountId);
 
     //when
     final var response = RestAssured.given().log().all()
@@ -69,13 +71,12 @@ class MoneyApiTest extends ApiTest {
     assertThat(response.jsonPath().getString("balance")).isEqualTo("0");
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("addMoneyRequestParam")
   @DisplayName("인증된 계정의 아이디로 지갑의 잔액을 충전한다")
-  void addMoney() {
+  void addMoney(final Long accountId, final AddMoneyRequest request) {
     //given
-    createWallet();
-    final Long accountId = 1L;
-    final var request = new AddMoneyRequest(BigInteger.valueOf(1000));
+    createWallet(accountId);
 
     //when
     final var response = RestAssured.given().log().all()
@@ -90,7 +91,7 @@ class MoneyApiTest extends ApiTest {
     //then
     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     assertThat(response.jsonPath().getString("accountId")).isEqualTo(String.valueOf(accountId));
-    assertThat(response.jsonPath().getString("balance")).isEqualTo("1000");
+    assertThat(response.jsonPath().getString("balance")).isEqualTo("3000");
   }
 
   private String encode(String value) {

@@ -1,30 +1,13 @@
 package com.hello.money.v1.repository;
 
 import com.hello.money.domain.Wallet;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
-@Repository
-public class WalletRepository {
-  private Map<Long, Wallet> persistence = new HashMap<>();
-  private Long sequence = 0L;
+public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
-  public Wallet save(final Wallet wallet) {
-    if (null == wallet.getId()) {
-      wallet.assignId(++sequence);
-    }
-    persistence.put(wallet.getId(), wallet);
-    return persistence.get(sequence);
-  }
+  Optional<Wallet> findByAccountId(Long accountId);
 
-  public Wallet findWalletByAccountId(final Long accountId) {
-    return persistence.get(sequence);
-  }
-
-  public void deleteAll() {
-    persistence = new HashMap<>();
-    sequence = 0L;
-  }
+  boolean existsByAccountId(Long accountId);
 }

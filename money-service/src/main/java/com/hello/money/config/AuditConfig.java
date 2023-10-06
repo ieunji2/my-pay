@@ -1,4 +1,4 @@
-package com.hello.account;
+package com.hello.money.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
