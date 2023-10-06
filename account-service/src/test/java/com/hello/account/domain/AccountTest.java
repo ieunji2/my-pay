@@ -1,10 +1,9 @@
-package com.hello.account;
+package com.hello.account.domain;
 
-import com.hello.account.domain.Account;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountTest {
 

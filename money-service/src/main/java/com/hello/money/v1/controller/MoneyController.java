@@ -1,6 +1,7 @@
 package com.hello.money.v1.controller;
 
 import com.hello.money.v1.dto.AddMoneyRequest;
+import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
 import com.hello.money.v1.service.MoneyService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,13 @@ public class MoneyController {
     Assert.hasText(xAccountId, "잘못된 요청입니다.");
     final Long accountId = Long.valueOf(decode(xAccountId));
     return moneyService.addMoney(accountId, request);
+  }
+
+  @PostMapping("/send")
+  public WalletResponse sendMoney(@RequestHeader("x-account-id") final String xAccountId, @RequestBody final SendMoneyRequest request) {
+    Assert.hasText(xAccountId, "잘못된 요청입니다.");
+    final Long accountId = Long.valueOf(decode(xAccountId));
+    return moneyService.sendMoney(accountId, request);
   }
 
   private String decode(String value) {

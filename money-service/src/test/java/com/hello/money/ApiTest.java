@@ -1,6 +1,5 @@
 package com.hello.money;
 
-import com.hello.money.v1.repository.WalletRepository;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +13,15 @@ public abstract class ApiTest {
   private int port;
 
   @Autowired
-  WalletRepository walletRepository;
+  private DatabaseCleanup databaseCleanup;
+
 
   @BeforeEach
   void setUp() {
     if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
       RestAssured.port = port;
+      databaseCleanup.afterPropertiesSet();
     }
-
-    walletRepository.deleteAll();
+    databaseCleanup.execute();
   }
 }
