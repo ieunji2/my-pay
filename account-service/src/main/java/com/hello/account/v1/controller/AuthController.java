@@ -23,8 +23,10 @@ public class AuthController {
 
     if ("123".equals(accessToken)) {
       return new ResponseAuth(1L, "이름", true);
+    } else if ("456".equals(accessToken)) {
+      return new ResponseAuth(2L, "이름2", true);
     } else {
-      return new ResponseAuth(1L, "이름", false);
+      return new ResponseAuth(3L, "이름3", false);
     }
   }
 }

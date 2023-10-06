@@ -1,16 +1,31 @@
 package com.hello.money.domain;
 
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 
-public class Transaction {
-  private Long id;
+@Entity
+@Table(name = "transactions")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Transaction extends BaseEntity {
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "wallet_id")
   private Wallet wallet;
+
   private Long receiverWalletId;
+
   private BigInteger amount;
+
   private String summary;
+
   private String transactionType;
+
   private String transactionStatus;
 
   public Transaction(
@@ -50,13 +65,5 @@ public class Transaction {
 
   public void fail() {
     this.transactionStatus = "오류";
-  }
-
-  public void assignId(final Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return this.id;
   }
 }

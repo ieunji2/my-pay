@@ -3,6 +3,7 @@ package com.hello.money;
 import com.hello.money.v1.dto.AddMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
+import com.hello.money.v1.repository.TransactionRepository;
 import com.hello.money.v1.repository.WalletRepository;
 import com.hello.money.v1.service.MoneyService;
 import com.hello.money.v1.service.WalletPort;
@@ -31,10 +32,14 @@ public class MoneyServiceTest {
   private WalletPort walletPort;
 
   @Autowired
+  private TransactionRepository transactionRepository;
+
+  @Autowired
   private WalletRepository walletRepository;
 
   @BeforeEach
   void setUp() {
+    transactionRepository.deleteAll();
     walletRepository.deleteAll();
   }
 
