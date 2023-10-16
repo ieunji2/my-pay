@@ -13,13 +13,13 @@ import reactor.core.publisher.Mono;
 public class AppConfig {
 
   @Bean
-  ExchangeApi getExchangeApi() {
+  ExchangeApi exchangeApi() {
     final WebClient client = WebClient
             .builder()
             .baseUrl("http://localhost:9000")
             .defaultStatusHandler(
                     HttpStatusCode::isError,
-                    clientResponse -> Mono.just(new IllegalArgumentException("계정 정보를 가져올 수 없습니다.")))
+                    clientResponse -> Mono.just(new IllegalArgumentException("Account Service Error")))
             .build();
     final HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
             .builder(WebClientAdapter.forClient(client))
