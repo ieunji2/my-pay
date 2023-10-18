@@ -4,8 +4,8 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 
-public record AddMoneyRequest(BigInteger amount, String summary) {
-  public AddMoneyRequest {
+public record SaveMoneyRequest(BigInteger amount, String summary) {
+  public SaveMoneyRequest {
     Assert.isTrue(amount.compareTo(BigInteger.ZERO) > 0, "금액은 0보다 커야 합니다.");
   }
 }

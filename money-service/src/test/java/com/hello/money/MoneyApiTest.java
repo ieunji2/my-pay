@@ -1,7 +1,7 @@
 package com.hello.money;
 
 import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.AddMoneyRequest;
+import com.hello.money.v1.dto.SaveMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
@@ -27,9 +27,9 @@ class MoneyApiTest extends ApiTest {
     );
   }
 
-  private static Stream<Arguments> addMoneyRequestParam() {
+  private static Stream<Arguments> saveMoneyRequestParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new AddMoneyRequest(BigInteger.valueOf(3000), "적요"))
+            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"))
     );
   }
 
@@ -82,9 +82,9 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("addMoneyRequestParam")
+  @MethodSource("saveMoneyRequestParam")
   @DisplayName("인증된 계정의 아이디로 지갑의 잔액을 충전한다")
-  void addMoney(final Account account, final AddMoneyRequest request) {
+  void saveMoney(final Account account, final SaveMoneyRequest request) {
     //given
     createWallet(account);
 
@@ -110,7 +110,7 @@ class MoneyApiTest extends ApiTest {
   @DisplayName("인증된 계정의 아이디로 금액을 송금한다")
   void sendMoney(final Account account, final SendMoneyRequest request) {
     //given
-    addMoney(account, new AddMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
     createWallet(new Account(2L, "이름2"));
 
     //when

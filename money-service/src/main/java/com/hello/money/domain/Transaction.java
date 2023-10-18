@@ -1,6 +1,9 @@
 package com.hello.money.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,13 +11,15 @@ import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Table(name = "transactions")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transaction extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "wallet_id")
   private Wallet wallet;
 
@@ -27,19 +32,6 @@ public class Transaction extends BaseEntity {
   private String transactionType;
 
   private String transactionStatus;
-
-  public Transaction(
-          final Wallet wallet,
-          final BigInteger amount,
-          final String summary) {
-    Assert.notNull(wallet, "지갑은 필수입니다.");
-    this.wallet = wallet;
-    this.receiverWalletId = wallet.getId();
-    this.amount = amount;
-    this.summary = summary;
-    this.transactionType = "입금";
-    this.transactionStatus = "요청";
-  }
 
   public Transaction(
           final Wallet wallet,
