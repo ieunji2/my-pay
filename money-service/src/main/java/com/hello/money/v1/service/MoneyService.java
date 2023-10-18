@@ -2,10 +2,7 @@ package com.hello.money.v1.service;
 
 import com.hello.money.domain.Transaction;
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.AccountResponse;
-import com.hello.money.v1.dto.AddMoneyRequest;
-import com.hello.money.v1.dto.SendMoneyRequest;
-import com.hello.money.v1.dto.WalletResponse;
+import com.hello.money.v1.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +20,11 @@ public class MoneyService {
   private final ExchangeApi exchangeApi;
 
   @Transactional
-  public WalletResponse createWallet(final Long accountId) {
+  public WalletResponse createWallet(final Account account) {
 
-    checkWalletExists(accountId);
+    checkWalletExists(account.id());
 
-    final Wallet wallet = new Wallet(accountId);
+    final Wallet wallet = new Wallet(account.id());
     return WalletResponse.from(walletPort.saveWallet(wallet));
   }
 
@@ -37,23 +34,23 @@ public class MoneyService {
     }
   }
 
-  public WalletResponse getWallet(final Long accountId) {
-    return WalletResponse.from(walletPort.findWalletByAccountId(accountId));
+  public WalletResponse getWallet(final Account account) {
+    return WalletResponse.from(walletPort.findWalletByAccountId(account.id()));
   }
 
   @Transactional
-  public WalletResponse addMoney(final Long accountId, final AddMoneyRequest request) {
+  public WalletResponse addMoney(final Account account, final AddMoneyRequest request) {
 
-    final Wallet wallet = getWallet(accountId, request);
+    final Wallet wallet = getWallet(account, request);
     final Transaction transaction = getTransaction(wallet, request);
 
     executeUpdate(wallet, transaction);
 
-    return WalletResponse.from(walletPort.findWalletByAccountId(accountId));
+    return WalletResponse.from(walletPort.findWalletByAccountId(account.id()));
   }
 
-  private Wallet getWallet(final Long accountId, final AddMoneyRequest request) {
-    final Wallet wallet = walletPort.findWalletByAccountId(accountId);
+  private Wallet getWallet(final Account account, final AddMoneyRequest request) {
+    final Wallet wallet = walletPort.findWalletByAccountId(account.id());
     wallet.addMoney(request.amount());
     return wallet;
   }
@@ -64,13 +61,13 @@ public class MoneyService {
   }
 
   @Transactional
-  public WalletResponse sendMoney(final Long accountId, final SendMoneyRequest request) {
+  public WalletResponse sendMoney(final Account account, final SendMoneyRequest request) {
 
-    checkBalance(accountId, request);
+    checkBalance(account, request);
 
     checkReceiver(request);
 
-    final Wallet senderWallet = getWallet(accountId, request);
+    final Wallet senderWallet = getWallet(account, request);
     final Transaction senderTransaction = getTransaction(senderWallet, request, "출금");
 
     executeUpdate(senderWallet, senderTransaction);
@@ -80,11 +77,11 @@ public class MoneyService {
 
     executeUpdate(receiverWallet, receiverTransaction);
 
-    return WalletResponse.from(walletPort.findWalletByAccountId(accountId));
+    return WalletResponse.from(walletPort.findWalletByAccountId(account.id()));
   }
 
-  private void checkBalance(final Long accountId, final SendMoneyRequest request) {
-    final Wallet wallet = walletPort.findWalletByAccountId(accountId);
+  private void checkBalance(final Account account, final SendMoneyRequest request) {
+    final Wallet wallet = walletPort.findWalletByAccountId(account.id());
 
     if (request.amount().compareTo(wallet.getBalance()) > 0) {
       throw new IllegalArgumentException("잔액이 부족합니다.");
@@ -93,7 +90,7 @@ public class MoneyService {
 
   private void checkReceiver(final SendMoneyRequest request) {
     if (!walletPort.existsWalletById(request.receiverWalletId())) {
-      new IllegalArgumentException("수취인의 지갑 ID가 존재하지 않습니다.");
+      throw new IllegalArgumentException("수취인의 지갑 ID가 존재하지 않습니다.");
     }
 
     final Wallet wallet = walletPort.findWalletById(request.receiverWalletId());
@@ -115,8 +112,8 @@ public class MoneyService {
     return response;
   }
 
-  private Wallet getWallet(final Long accountId, final SendMoneyRequest request) {
-    final Wallet wallet = walletPort.findWalletByAccountId(accountId);
+  private Wallet getWallet(final Account account, final SendMoneyRequest request) {
+    final Wallet wallet = walletPort.findWalletByAccountId(account.id());
     wallet.addMoney(request.amount().negate());
     return wallet;
   }

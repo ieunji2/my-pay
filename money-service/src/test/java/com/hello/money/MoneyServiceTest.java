@@ -1,5 +1,6 @@
 package com.hello.money;
 
+import com.hello.money.v1.dto.Account;
 import com.hello.money.v1.dto.AddMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
@@ -43,92 +44,92 @@ public class MoneyServiceTest {
     walletRepository.deleteAll();
   }
 
-  private static Stream<Arguments> accountIdParam() {
+  private static Stream<Arguments> accountParam() {
     return Stream.of(
-            arguments(1L)
+            arguments(new Account(1L, "이름"))
     );
   }
 
   private static Stream<Arguments> addMoneyRequestParam() {
     return Stream.of(
-            arguments(1L, new AddMoneyRequest(BigInteger.valueOf(3000), "적요"))
+            arguments(new Account(1L, "이름"), new AddMoneyRequest(BigInteger.valueOf(3000), "적요"))
     );
   }
 
   private static Stream<Arguments> sendMoneyRequestParam() {
     return Stream.of(
-            arguments(1L, new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요"))
+            arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요"))
     );
   }
 
-  void 지갑생성(final Long accountId) {
+  void 지갑생성(final Account account) {
     //given, when
-    final WalletResponse response = moneyService.createWallet(accountId);
+    final WalletResponse response = moneyService.createWallet(account);
 
     //then
-    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.accountId()).isEqualTo(account.id());
     assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
   }
 
   @ParameterizedTest
-  @MethodSource("accountIdParam")
-  void 계정에_해당하는_지갑이_있는지_확인(final Long accountId) {
+  @MethodSource("accountParam")
+  void 계정에_해당하는_지갑이_있는지_확인(final Account account) {
     //given
-    지갑생성(accountId);
+    지갑생성(account);
 
     //when
-    final boolean existsed = walletPort.existsWalletByAccountId(accountId);
+    final boolean existsed = walletPort.existsWalletByAccountId(account.id());
 
     //then
     assertThat(existsed).isTrue();
   }
 
   @ParameterizedTest
-  @MethodSource("accountIdParam")
-  void 같은_계정으로_지갑_생성시_오류(final Long accountId) {
+  @MethodSource("accountParam")
+  void 같은_계정으로_지갑_생성시_오류(final Account account) {
     //given
-    지갑생성(accountId);
+    지갑생성(account);
 
     //when, then
     assertThatThrownBy(() -> {
-      지갑생성(accountId);
+      지갑생성(account);
     }).isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
-  @MethodSource("accountIdParam")
-  void 지갑조회(final Long accountId) {
+  @MethodSource("accountParam")
+  void 지갑조회(final Account account) {
     //given
-    지갑생성(accountId);
+    지갑생성(account);
 
     //when
-    final WalletResponse response = moneyService.getWallet(accountId);
+    final WalletResponse response = moneyService.getWallet(account);
 
     //then
-    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.accountId()).isEqualTo(account.id());
     assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
   }
 
   @ParameterizedTest
-  @MethodSource("accountIdParam")
-  void 계정에_해당하는_지갑이_없으면_조회시_오류(final Long accountId) {
+  @MethodSource("accountParam")
+  void 계정에_해당하는_지갑이_없으면_조회시_오류(final Account account) {
     //given, when, then
     assertThatThrownBy(() -> {
-      moneyService.getWallet(accountId);
+      moneyService.getWallet(account);
     }).isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
   @MethodSource("addMoneyRequestParam")
-  void 머니충전(final Long accountId, final AddMoneyRequest request) {
+  void 머니충전(final Account account, final AddMoneyRequest request) {
     //given
-    지갑생성(accountId);
+    지갑생성(account);
 
     //when
-    final WalletResponse response = moneyService.addMoney(accountId, request);
+    final WalletResponse response = moneyService.addMoney(account, request);
 
     //then
-    assertThat(response.accountId()).isEqualTo(accountId);
+    assertThat(response.accountId()).isEqualTo(account.id());
     assertThat(response.balance()).isEqualTo(request.amount());
   }
 

@@ -1,15 +1,13 @@
 package com.hello.money.v1.controller;
 
+import com.hello.money.config.Authenticated;
+import com.hello.money.v1.dto.Account;
 import com.hello.money.v1.dto.AddMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
 import com.hello.money.v1.service.MoneyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,34 +17,22 @@ public class MoneyController {
   private final MoneyService moneyService;
 
   @PostMapping
-  public WalletResponse createWallet(@RequestHeader("x-account-id") final String xAccountId) {
-    Assert.hasText(xAccountId, "잘못된 요청입니다.");
-    final Long accountId = Long.valueOf(decode(xAccountId));
-    return moneyService.createWallet(accountId);
+  public WalletResponse createWallet(@Authenticated final Account account) {
+    return moneyService.createWallet(account);
   }
 
   @GetMapping
-  public WalletResponse getWallet(@RequestHeader("x-account-id") final String xAccountId) {
-    Assert.hasText(xAccountId, "잘못된 요청입니다.");
-    final Long accountId = Long.valueOf(decode(xAccountId));
-    return moneyService.getWallet(accountId);
+  public WalletResponse getWallet(@Authenticated final Account account) {
+    return moneyService.getWallet(account);
   }
 
   @PostMapping("/charge")
-  public WalletResponse addMoney(@RequestHeader("x-account-id") final String xAccountId, @RequestBody final AddMoneyRequest request) {
-    Assert.hasText(xAccountId, "잘못된 요청입니다.");
-    final Long accountId = Long.valueOf(decode(xAccountId));
-    return moneyService.addMoney(accountId, request);
+  public WalletResponse addMoney(@Authenticated final Account account, @RequestBody final AddMoneyRequest request) {
+    return moneyService.addMoney(account, request);
   }
 
   @PostMapping("/send")
-  public WalletResponse sendMoney(@RequestHeader("x-account-id") final String xAccountId, @RequestBody final SendMoneyRequest request) {
-    Assert.hasText(xAccountId, "잘못된 요청입니다.");
-    final Long accountId = Long.valueOf(decode(xAccountId));
-    return moneyService.sendMoney(accountId, request);
-  }
-
-  private String decode(String value) {
-    return URLDecoder.decode(value, StandardCharsets.UTF_8);
+  public WalletResponse sendMoney(@Authenticated final Account account, @RequestBody final SendMoneyRequest request) {
+    return moneyService.sendMoney(account, request);
   }
 }
