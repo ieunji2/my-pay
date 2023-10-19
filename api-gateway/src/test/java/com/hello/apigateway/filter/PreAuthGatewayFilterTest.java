@@ -16,8 +16,7 @@ class PreAuthGatewayFilterTest {
 
   private static Stream<Arguments> headerValues() {
     return Stream.of(
-            arguments(1L, "이름")
-    );
+            arguments(1L, "이름"));
   }
 
   @ParameterizedTest

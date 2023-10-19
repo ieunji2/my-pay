@@ -49,20 +49,17 @@ public class MoneyServiceTest {
 
   private static Stream<Arguments> accountParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"))
-    );
+            arguments(new Account(1L, "이름")));
   }
 
   private static Stream<Arguments> saveMoneyRequestParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"))
-    );
+            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요")));
   }
 
   private static Stream<Arguments> sendMoneyRequestParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요"))
-    );
+            arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요")));
   }
 
   void 지갑생성(final Account account) {

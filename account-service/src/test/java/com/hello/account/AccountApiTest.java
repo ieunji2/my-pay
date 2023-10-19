@@ -29,8 +29,7 @@ public class AccountApiTest extends ApiTest {
 
   private static Stream<Arguments> accountIdParam() {
     return Stream.of(
-            arguments(1L)
-    );
+            arguments(1L));
   }
 
   @Test
