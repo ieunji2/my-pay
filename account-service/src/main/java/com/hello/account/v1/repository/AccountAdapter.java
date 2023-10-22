@@ -26,5 +26,4 @@ class AccountAdapter implements AccountPort {
   public void removeAccount(final Account account) {
     accountRepository.delete(account);
   }
-
 }

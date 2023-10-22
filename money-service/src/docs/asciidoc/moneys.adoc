@@ -1,0 +1,15 @@
+== 머니(Money)
+
+머니에 대한 기능을 제공합니다.
+
+=== 지갑생성
+operation::money-api-test/create-wallet[snippets='http-request,http-response,request-headers,response-fields']
+
+=== 지갑조회
+operation::money-api-test/get-wallet[snippets='http-request,http-response,request-headers,response-fields']
+
+=== 머니충전
+operation::money-api-test/save-money[snippets='http-request,http-response,request-headers,request-fields,response-fields']
+
+=== 머니송금
+operation::money-api-test/send-money[snippets='http-request,http-response,request-headers,request-fields,response-fields']

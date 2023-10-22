@@ -1,0 +1,16 @@
+= My Pay Application Document
+:toc: left
+:toc-title: 목차
+:toclevels: 2
+:sectlinks:
+:sectnums:
+:source-highlighter: highlightjs
+
+== 개요
+
+Money Service의 API 문서입니다.
+
+== API
+
+//머니
+include::moneys.adoc[]

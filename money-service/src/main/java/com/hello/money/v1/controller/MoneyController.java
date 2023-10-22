@@ -1,26 +1,38 @@
 package com.hello.money.v1.controller;
 
+import com.hello.money.config.Authenticated;
+import com.hello.money.v1.dto.Account;
+import com.hello.money.v1.dto.SaveMoneyRequest;
+import com.hello.money.v1.dto.SendMoneyRequest;
+import com.hello.money.v1.dto.WalletResponse;
+import com.hello.money.v1.service.MoneyService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
-@Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/send")
+@RequestMapping("/v1/moneys")
 public class MoneyController {
 
-  @GetMapping("/test")
-  public String test(@RequestHeader("x-account-id") final String encodedId, @RequestHeader("x-account-name") final String encodedName) {
-    final String accountId = URLDecoder.decode(encodedId, StandardCharsets.UTF_8);
-    final String accountName = URLDecoder.decode(encodedName, StandardCharsets.UTF_8);
-    log.info("x-account-id -> {}, x-account-name -> {}", accountId, accountName);
-    return "Welcome to the Money Service.";
+  private final MoneyService moneyService;
+
+  @PostMapping
+  public WalletResponse createWallet(@Authenticated final Account account) {
+    return moneyService.createWallet(account);
+  }
+
+  @GetMapping
+  public WalletResponse getWallet(@Authenticated final Account account) {
+    return moneyService.getWallet(account);
+  }
+
+  @PostMapping("/charge")
+  public WalletResponse saveMoney(@Authenticated final Account account, @RequestBody final SaveMoneyRequest request) {
+    return moneyService.saveMoney(account, request);
+  }
+
+  @PostMapping("/send")
+  public WalletResponse sendMoney(@Authenticated final Account account, @RequestBody final SendMoneyRequest request) {
+    return moneyService.sendMoney(account, request);
   }
 }

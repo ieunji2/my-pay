@@ -1,8 +1,6 @@
 package com.hello.account.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Auth extends BaseEntity {
 
-  @OneToOne
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id")
   private Account account;
 
   private String accessToken;

@@ -1,5 +1,6 @@
 package com.hello.account;
 
+import com.hello.account.config.RestDocsConfig;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;

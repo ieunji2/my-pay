@@ -1,4 +1,4 @@
-package com.hello.account;
+package com.hello.money.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
