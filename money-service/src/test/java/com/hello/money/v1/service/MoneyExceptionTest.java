@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MoneyTransactionServiceExceptionTest {
+public class MoneyExceptionTest {
 
   private final WalletPort walletPort;
 
-  public MoneyTransactionServiceExceptionTest(final WalletPort walletPort) {
+  public MoneyExceptionTest(final WalletPort walletPort) {
     this.walletPort = walletPort;
   }
 

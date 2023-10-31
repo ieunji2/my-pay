@@ -95,8 +95,8 @@ public class MoneyService {
       throw new IllegalArgumentException("수취인의 계정으로 송금할 수 없습니다.");
     }
 
-    //3. sender addMoney
-    senderWallet.addMoney(request.amount().negate());
+    //3. sender subtractMoney
+    senderWallet.subtractMoney(request.amount());
 
     //4. sender 트랜잭션 요청 내역 쌓기
     final Transaction senderTransaction = transactionPort.saveTransaction(new Transaction(
