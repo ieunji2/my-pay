@@ -18,6 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -254,5 +257,76 @@ public class MoneyServiceTest {
     //then
     assertThat(savedSenderWallet.getBalance()).isEqualTo(BigInteger.valueOf(3000));
     assertThat(savedReceiverWallet.getBalance()).isEqualTo(BigInteger.ZERO);
+  }
+
+  @ParameterizedTest
+  @MethodSource("saveMoneyRequestParam")
+  @DisplayName("머니충전 동시 요청 시 race condition 발생으로 잔액이 기대와 다르다.")
+  void 머니충전_동시에_1000번_요청_후_잔액_확인(final Account account, final SaveMoneyRequest request) throws InterruptedException {
+    //given
+    moneyService.createWallet(account);
+
+    //when
+    final int threadCount = 1000;
+    final ExecutorService executorService = Executors.newFixedThreadPool(32);
+    final CountDownLatch latch = new CountDownLatch(threadCount);
+
+    for (int i = 0; i < threadCount; i++) {
+      executorService.submit(() -> {
+        try {
+          moneyService.saveMoney(account, request);
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    latch.await();
+
+    //then
+    final WalletResponse wallet = moneyService.getWallet(account);
+    System.out.println("wallet.balance() = " + wallet.balance());
+    assertThat(wallet.balance()).isNotEqualTo(BigInteger.valueOf(3000000));
+  }
+
+  @ParameterizedTest
+  @MethodSource("sendMoneyRequestParam")
+  @DisplayName("머니송금 동시 요청 시 race condition 발생으로 잔액이 기대와 다르다.")
+  void 머니송금_동시에_1000번_요청_후_잔액_확인(final Account account, final SendMoneyRequest request) throws InterruptedException {
+    //given
+    moneyService.createWallet(account);
+    moneyService.saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
+
+    final WalletResponse receiverWallet = moneyService.createWallet(new Account(2L, "이름2"));
+
+    //when
+    final int threadCount = 1000;
+    final ExecutorService executorService = Executors.newFixedThreadPool(32);
+    final CountDownLatch latch = new CountDownLatch(threadCount);
+
+    for (int i = 0; i < threadCount; i++) {
+      executorService.submit(() -> {
+        try {
+          moneyService.sendMoney(account, new SendMoneyRequest(
+                  receiverWallet.id(),
+                  BigInteger.ONE,
+                  request.summary()));
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    latch.await();
+
+    //then
+    final Wallet savedSenderWallet = walletPort.findWalletByAccountId(account.id());
+    System.out.println("savedSenderWallet.getBalance() = " + savedSenderWallet.getBalance());
+
+    final Wallet savedReceiverWallet = walletPort.findWalletById(receiverWallet.id());
+    System.out.println("savedReceiverWallet.getBalance() = " + savedReceiverWallet.getBalance());
+
+    assertThat(savedSenderWallet.getBalance()).isNotEqualTo(BigInteger.valueOf(2000));
+    assertThat(savedReceiverWallet.getBalance()).isNotEqualTo(BigInteger.valueOf(1000));
   }
 }
