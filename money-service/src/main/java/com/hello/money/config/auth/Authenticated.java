@@ -1,4 +1,4 @@
-package com.hello.money.config;
+package com.hello.money.config.auth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

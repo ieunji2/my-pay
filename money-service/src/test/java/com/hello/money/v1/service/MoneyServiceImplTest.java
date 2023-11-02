@@ -2,7 +2,7 @@ package com.hello.money.v1.service;
 
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.SaveMoneyRequest;
+import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
 import com.hello.money.v1.repository.TransactionRepository;
@@ -28,10 +28,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SpringBootTest
-public class MoneyServiceTest {
+public class MoneyServiceImplTest {
 
   @Autowired
-  private MoneyService moneyService;
+  private MoneyServiceImpl moneyService;
 
   @Autowired
   private WalletPort walletPort;
@@ -56,9 +56,9 @@ public class MoneyServiceTest {
             arguments(new Account(1L, "이름")));
   }
 
-  private static Stream<Arguments> saveMoneyRequestParam() {
+  private static Stream<Arguments> chargeMoneyRequestParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요")));
+            arguments(new Account(1L, "이름"), new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요")));
   }
 
   private static Stream<Arguments> sendMoneyRequestParam() {
@@ -131,14 +131,14 @@ public class MoneyServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
+  @MethodSource("chargeMoneyRequestParam")
   @DisplayName("지갑 생성 후 금액을 충전한다.")
-  void 머니충전(final Account account, final SaveMoneyRequest request) {
+  void 머니충전(final Account account, final ChargeMoneyRequest request) {
     //given
     moneyService.createWallet(account);
 
     //when
-    final WalletResponse response = moneyService.saveMoney(account, request);
+    final WalletResponse response = moneyService.chargeMoney(account, request);
 
     //then
     assertThat(response.accountId()).isEqualTo(account.id());
@@ -146,21 +146,21 @@ public class MoneyServiceTest {
   }
 
   @Test
-  @DisplayName("충전 금액이 0보다 크지 않으면 SaveMoneyRequest dto 생성 시 예외가 발생한다.")
-  void SaveMoneyRequest_생성_예외_발생() {
+  @DisplayName("충전 금액이 0보다 크지 않으면 ChargeMoneyRequest dto 생성 시 예외가 발생한다.")
+  void ChargeMoneyRequest_생성_예외_발생() {
     //given
     final BigInteger amount = BigInteger.ZERO;
 
     //when, then
     assertThatThrownBy(() -> {
-      new SaveMoneyRequest(amount, "적요");
+      new ChargeMoneyRequest(amount, "적요");
     }).isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
+  @MethodSource("chargeMoneyRequestParam")
   @DisplayName("머니충전의 executeSave()에서 예외 발생 시 롤백된다.")
-  void 머니충전_예외_발생_시_잔액_충전_안됨(final Account account, final SaveMoneyRequest request) {
+  void 머니충전_예외_발생_시_잔액_충전_안됨(final Account account, final ChargeMoneyRequest request) {
     //given
     moneyService.createWallet(account);
 
@@ -170,7 +170,7 @@ public class MoneyServiceTest {
 
     //when
     assertThatThrownBy(() -> {
-      exceptionTest.executeSave(wallet);
+      exceptionTest.executeCharge(wallet);
     }).isInstanceOf(RuntimeException.class).hasMessage("Rollback executeSave");
 
     final Wallet savedWallet = walletPort.findWalletById(wallet.getId());
@@ -180,9 +180,9 @@ public class MoneyServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
+  @MethodSource("chargeMoneyRequestParam")
   @DisplayName("동일한 Bean 안에서 상위 메서드에 Transactional 어노테이션이 없으면 하위에 선언되어 있어도 전이되지 않는다.")
-  void 머니충전_예외_발생_시_잔액_충전_됨(final Account account, final SaveMoneyRequest request) {
+  void 머니충전_예외_발생_시_잔액_충전_됨(final Account account, final ChargeMoneyRequest request) {
     //given
     moneyService.createWallet(account);
 
@@ -192,7 +192,7 @@ public class MoneyServiceTest {
 
     //when
     assertThatThrownBy(() -> {
-      executeSave(wallet);
+      executeCharge(wallet);
     }).isInstanceOf(RuntimeException.class).hasMessage("Transactional not working");
 
     final Wallet savedWallet = walletPort.findWalletById(wallet.getId());
@@ -202,7 +202,7 @@ public class MoneyServiceTest {
   }
 
   @Transactional
-  public void executeSave(final Wallet wallet) {
+  public void executeCharge(final Wallet wallet) {
     walletPort.saveWallet(wallet);
     throw new RuntimeException("Transactional not working");
   }
@@ -213,7 +213,7 @@ public class MoneyServiceTest {
   void 머니송금(final Account account, final SendMoneyRequest request) {
     //given
     moneyService.createWallet(account);
-    moneyService.saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    moneyService.chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
 
     final WalletResponse receiverWallet = moneyService.createWallet(new Account(2L, "이름2"));
 
@@ -236,7 +236,7 @@ public class MoneyServiceTest {
   void 머니송금_예외_발생_시_잔액_변경_안됨(final Account account, final SendMoneyRequest request) {
     //given
     moneyService.createWallet(account);
-    moneyService.saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    moneyService.chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
 
     moneyService.createWallet(new Account(2L, "이름2"));
 
@@ -260,9 +260,9 @@ public class MoneyServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
+  @MethodSource("chargeMoneyRequestParam")
   @DisplayName("머니충전 동시 요청 시 race condition 발생으로 잔액이 기대와 다르다.")
-  void 머니충전_동시에_1000번_요청_후_잔액_확인(final Account account, final SaveMoneyRequest request) throws InterruptedException {
+  void 머니충전_동시에_1000번_요청_후_잔액_확인(final Account account, final ChargeMoneyRequest request) throws InterruptedException {
     //given
     moneyService.createWallet(account);
 
@@ -274,7 +274,7 @@ public class MoneyServiceTest {
     for (int i = 0; i < threadCount; i++) {
       executorService.submit(() -> {
         try {
-          moneyService.saveMoney(account, request);
+          moneyService.chargeMoney(account, request);
         } finally {
           latch.countDown();
         }
@@ -295,7 +295,7 @@ public class MoneyServiceTest {
   void 머니송금_동시에_1000번_요청_후_잔액_확인(final Account account, final SendMoneyRequest request) throws InterruptedException {
     //given
     moneyService.createWallet(account);
-    moneyService.saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    moneyService.chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
 
     final WalletResponse receiverWallet = moneyService.createWallet(new Account(2L, "이름2"));
 

@@ -1,4 +1,4 @@
-package com.hello.money.config;
+package com.hello.money.config.auth;
 
 import com.hello.money.v1.dto.Account;
 import org.springframework.core.MethodParameter;

@@ -1,8 +1,8 @@
 package com.hello.money.v1.controller;
 
-import com.hello.money.config.Authenticated;
+import com.hello.money.config.auth.Authenticated;
 import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.SaveMoneyRequest;
+import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import com.hello.money.v1.dto.WalletResponse;
 import com.hello.money.v1.service.MoneyService;
@@ -27,8 +27,8 @@ public class MoneyController {
   }
 
   @PostMapping("/charge")
-  public WalletResponse saveMoney(@Authenticated final Account account, @RequestBody final SaveMoneyRequest request) {
-    return moneyService.saveMoney(account, request);
+  public WalletResponse chargeMoney(@Authenticated final Account account, @RequestBody final ChargeMoneyRequest request) {
+    return moneyService.chargeMoney(account, request);
   }
 
   @PostMapping("/send")

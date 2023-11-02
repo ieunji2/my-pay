@@ -1,7 +1,7 @@
 package com.hello.money;
 
 import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.SaveMoneyRequest;
+import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
@@ -30,9 +30,9 @@ class MoneyApiTest extends ApiTest {
             arguments(new Account(1L, "이름")));
   }
 
-  private static Stream<Arguments> saveMoneyRequestParam() {
+  private static Stream<Arguments> chargeMoneyRequestParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요")));
+            arguments(new Account(1L, "이름"), new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요")));
   }
 
   private static Stream<Arguments> sendMoneyRequestParam() {
@@ -91,9 +91,9 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
+  @MethodSource("chargeMoneyRequestParam")
   @DisplayName("인증된 계정의 아이디로 지갑의 잔액을 충전한다")
-  void saveMoney(final Account account, final SaveMoneyRequest request) {
+  void chargeMoney(final Account account, final ChargeMoneyRequest request) {
     //given
     createWallet(account);
 
@@ -124,7 +124,7 @@ class MoneyApiTest extends ApiTest {
   @DisplayName("인증된 계정의 아이디로 금액을 송금한다")
   void sendMoney(final Account account, final SendMoneyRequest request) {
     //given
-    saveMoney(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
     createWallet(new Account(2L, "이름2"));
 
     final Snippet[] snippets = {

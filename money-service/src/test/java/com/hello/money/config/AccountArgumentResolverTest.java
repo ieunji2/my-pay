@@ -1,5 +1,6 @@
 package com.hello.money.config;
 
+import com.hello.money.config.auth.AccountArgumentResolver;
 import com.hello.money.v1.controller.MoneyController;
 import com.hello.money.v1.dto.Account;
 import com.hello.money.v1.service.MoneyService;

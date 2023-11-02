@@ -12,7 +12,7 @@ public class MoneyTransactionService {
   private final WalletPort walletPort;
 
   @Transactional
-  public void executeSave(final Wallet wallet) {
+  public void executeCharge(final Wallet wallet) {
     walletPort.saveWallet(wallet);
   }
 

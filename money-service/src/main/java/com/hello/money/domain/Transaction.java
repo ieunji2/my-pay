@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
+import java.util.Objects;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -37,17 +38,15 @@ public class Transaction extends BaseEntity {
           final Wallet wallet,
           final Long receiverWalletId,
           final BigInteger amount,
-          final String summary,
-          final String transactionType) {
+          final String summary) {
     Assert.notNull(wallet, "지갑은 필수입니다.");
     Assert.notNull(receiverWalletId, "수취인 지갑 ID는 필수입니다.");
     Assert.isTrue(amount.compareTo(BigInteger.ZERO) > 0, "금액은 0보다 커야 합니다.");
-    Assert.hasText(transactionType, "거래 유형은 필수입니다.");
     this.wallet = wallet;
     this.receiverWalletId = receiverWalletId;
     this.amount = amount;
     this.summary = summary;
-    this.transactionType = transactionType;
+    this.transactionType = Objects.equals(wallet.getId(), receiverWalletId) ? "입금" : "출금";
     this.transactionStatus = "요청";
   }
 

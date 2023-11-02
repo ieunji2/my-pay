@@ -14,7 +14,7 @@ public class MoneyExceptionTest {
   }
 
   @Transactional
-  public void executeSave(final Wallet wallet) {
+  public void executeCharge(final Wallet wallet) {
     walletPort.saveWallet(wallet);
     throw new RuntimeException("Rollback executeSave");
   }
