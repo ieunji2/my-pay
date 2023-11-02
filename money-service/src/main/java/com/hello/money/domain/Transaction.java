@@ -1,9 +1,6 @@
 package com.hello.money.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +27,11 @@ public class Transaction extends BaseEntity {
 
   private String summary;
 
-  private String transactionType;
+  @Enumerated(EnumType.STRING)
+  private TransactionType transactionType;
 
-  private String transactionStatus;
+  @Enumerated(EnumType.STRING)
+  private TransactionStatus transactionStatus;
 
   public Transaction(
           final Wallet wallet,
@@ -46,15 +45,15 @@ public class Transaction extends BaseEntity {
     this.receiverWalletId = receiverWalletId;
     this.amount = amount;
     this.summary = summary;
-    this.transactionType = Objects.equals(wallet.getId(), receiverWalletId) ? "입금" : "출금";
-    this.transactionStatus = "요청";
+    this.transactionType = Objects.equals(wallet.getId(), receiverWalletId) ? TransactionType.DEPOSIT : TransactionType.WITHDRAW;
+    this.transactionStatus = TransactionStatus.REQUEST;
   }
 
   public void success() {
-    this.transactionStatus = "정상";
+    this.transactionStatus = TransactionStatus.NORMAL;
   }
 
   public void fail() {
-    this.transactionStatus = "오류";
+    this.transactionStatus = TransactionStatus.ERROR;
   }
 }
