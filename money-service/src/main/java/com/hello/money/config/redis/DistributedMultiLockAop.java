@@ -44,6 +44,15 @@ public class DistributedMultiLockAop {
   }
 
   private RLock[] getLocks(final DistributedMultiLock distributedLock, final MethodSignature signature, final ProceedingJoinPoint joinPoint) {
+    RLock[] locks = {};
+    final String[] keys = getKeys(distributedLock, signature, joinPoint);
+    for (String key : keys) {
+      locks = appendElement(locks, redissonClient.getLock(key));
+    }
+    return locks;
+  }
+
+  private String[] getKeys(final DistributedMultiLock distributedLock, final MethodSignature signature, final ProceedingJoinPoint joinPoint) {
     String[] keys = {};
     for (String key : distributedLock.keys()) {
       keys = appendElement(keys, REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(
@@ -51,12 +60,7 @@ public class DistributedMultiLockAop {
               joinPoint.getArgs(),
               key));
     }
-
-    RLock[] locks = {};
-    for (String key : keys) {
-      locks = appendElement(locks, redissonClient.getLock(key));
-    }
-    return locks;
+    return keys;
   }
 
   private <T> T[] appendElement(T[] originArray, T element) {

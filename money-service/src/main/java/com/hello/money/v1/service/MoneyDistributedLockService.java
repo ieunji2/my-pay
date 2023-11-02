@@ -22,8 +22,8 @@ public class MoneyDistributedLockService {
   private final TransactionPort transactionPort;
   private final ExchangeApi exchangeApi;
 
-  @DistributedLock(key = "#key")
-  public void chargeMoneyWithLock(final Account account, final ChargeMoneyRequest request, final Long key) {
+  @DistributedLock(key = "#walletId")
+  public void chargeMoneyWithLock(final Account account, final ChargeMoneyRequest request, final Long walletId) {
     final Wallet wallet = walletPort.findWalletByAccountId(account.id());
     wallet.addMoney(request.amount());
     final Transaction transaction = getSavedTransaction(wallet, request);
@@ -46,8 +46,8 @@ public class MoneyDistributedLockService {
             request.summary()));
   }
 
-  @DistributedMultiLock(keys = {"#key", "#request.receiverWalletId()"})
-  public void sendMoneyWithLock(final Account account, final SendMoneyRequest request, final Long key) {
+  @DistributedMultiLock(keys = {"#walletId", "#request.receiverWalletId()"})
+  public void sendMoneyWithLock(final Account account, final SendMoneyRequest request, final Long walletId) {
 
     final Wallet senderWallet = getSenderWallet(account, request);
 
