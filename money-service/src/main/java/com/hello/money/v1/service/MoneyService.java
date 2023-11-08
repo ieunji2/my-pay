@@ -1,17 +1,17 @@
 package com.hello.money.v1.service;
 
-import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.ChargeMoneyRequest;
-import com.hello.money.v1.dto.SendMoneyRequest;
-import com.hello.money.v1.dto.WalletResponse;
+import com.hello.money.domain.Wallet;
+import com.hello.money.v1.dto.AccountDto;
+import com.hello.money.v1.dto.ChargeMoneyServiceDto;
+import com.hello.money.v1.dto.SendMoneyServiceDto;
 
 public interface MoneyService {
 
-  WalletResponse createWallet(final Account account);
+  Wallet createWallet(final AccountDto dto);
 
-  WalletResponse getWallet(final Account account);
+  Wallet getWallet(final AccountDto dto);
 
-  WalletResponse chargeMoney(final Account account, final ChargeMoneyRequest request);
+  Wallet chargeMoney(final ChargeMoneyServiceDto dto);
 
-  WalletResponse sendMoney(final Account account, final SendMoneyRequest request);
+  Wallet sendMoney(final SendMoneyServiceDto dto);
 }
