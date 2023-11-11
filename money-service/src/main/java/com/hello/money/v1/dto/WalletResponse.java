@@ -1,25 +1,23 @@
 package com.hello.money.v1.dto;
 
-import com.hello.money.domain.Wallet;
-import org.springframework.util.Assert;
+import com.hello.money.common.validator.SelfValidating;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigInteger;
 
-public record WalletResponse(Long id, Long accountId, BigInteger balance) {
-  public WalletResponse {
-    Assert.notNull(id, "지갑 ID는 필수입니다.");
-    Assert.notNull(accountId, "계정 ID는 필수입니다.");
-    Assert.isTrue(balance.compareTo(BigInteger.ZERO) >= 0, "잔액은 0보다 크거나 같아야 합니다.");
-  }
+public record WalletResponse(
+        @NotNull Long id,
+        @NotNull Long accountId,
+        @Min(0) BigInteger balance) {
 
-  public WalletResponse(final Wallet wallet) {
-    this(
-            wallet.getId(),
-            wallet.getAccountId(),
-            wallet.getBalance());
-  }
-
-  public static WalletResponse from(final Wallet wallet) {
-    return new WalletResponse(wallet);
+  public WalletResponse(
+          @NotNull final Long id,
+          @NotNull final Long accountId,
+          @Min(0) final BigInteger balance) {
+    this.id = id;
+    this.accountId = accountId;
+    this.balance = balance;
+    SelfValidating.validateSelf(this);
   }
 }

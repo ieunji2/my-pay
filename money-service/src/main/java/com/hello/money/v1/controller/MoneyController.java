@@ -2,6 +2,7 @@ package com.hello.money.v1.controller;
 
 import com.hello.money.config.auth.Authenticated;
 import com.hello.money.v1.dto.*;
+import com.hello.money.v1.controller.mapper.MoneyMapper;
 import com.hello.money.v1.service.MoneyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,13 @@ public class MoneyController {
 
   @PostMapping
   public WalletResponse createWallet(@Authenticated final Account account) {
-    final AccountDto dto = mapper.toAccountDto(account);
+    final CreateWalletServiceDto dto = mapper.toCreateWalletServiceDto(account);
     return mapper.toWalletResponse(moneyService.createWallet(dto));
   }
 
   @GetMapping
   public WalletResponse getWallet(@Authenticated final Account account) {
-    final AccountDto dto = mapper.toAccountDto(account);
+    final GetWalletServiceDto dto = mapper.toGetWalletServiceDto(account);
     return mapper.toWalletResponse(moneyService.getWallet(dto));
   }
 

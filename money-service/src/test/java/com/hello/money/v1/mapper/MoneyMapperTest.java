@@ -1,6 +1,7 @@
-package com.hello.money.v1.controller;
+package com.hello.money.v1.mapper;
 
 import com.hello.money.domain.Wallet;
+import com.hello.money.v1.controller.mapper.MoneyMapper;
 import com.hello.money.v1.dto.*;
 import com.hello.money.v1.service.WalletPort;
 import org.junit.jupiter.api.DisplayName;
@@ -22,13 +23,27 @@ class MoneyMapperTest {
   private WalletPort walletPort;
 
   @Test
-  @DisplayName("Account 객체를 AccountDto 객체에 매핑한다.")
-  void toAccountDto() {
+  @DisplayName("Account 객체를 CreateWalletServiceDto 객체에 매핑한다.")
+  void toCreateWalletServiceDto() {
     //given
     final Account account = new Account(1L, "이름");
 
     //when
-    final AccountDto dto = mapper.toAccountDto(account);
+    final CreateWalletServiceDto dto = mapper.toCreateWalletServiceDto(account);
+
+    //then
+    assertThat(dto.accountId()).isEqualTo(account.id());
+    assertThat(dto.accountName()).isEqualTo(account.name());
+  }
+
+  @Test
+  @DisplayName("Account 객체를 GetWalletServiceDto 객체에 매핑한다.")
+  void toGetWalletServiceDto() {
+    //given
+    final Account account = new Account(1L, "이름");
+
+    //when
+    final GetWalletServiceDto dto = mapper.toGetWalletServiceDto(account);
 
     //then
     assertThat(dto.accountId()).isEqualTo(account.id());

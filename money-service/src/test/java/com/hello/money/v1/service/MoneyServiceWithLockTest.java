@@ -1,7 +1,8 @@
 package com.hello.money.v1.service;
 
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.*;
+import com.hello.money.v1.dto.ChargeMoneyServiceDto;
+import com.hello.money.v1.dto.SendMoneyServiceDto;
 import com.hello.money.v1.repository.TransactionRepository;
 import com.hello.money.v1.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +66,7 @@ class MoneyServiceWithLockTest {
   @DisplayName("@DistributedLock 적용한 머니충전 동시 요청 시 잔액이 기대와 같다.")
   public void 분산_락_머니충전_동시에_1000번_요청_후_잔액_확인(final ChargeMoneyServiceDto dto) throws InterruptedException {
     //given
-    moneyService.createWallet(new AccountDto(dto.accountId(), dto.accountName()));
+    walletPort.saveWallet(new Wallet(dto.accountId()));
 
     //when
     final int threadCount = 1000;

@@ -1,4 +1,4 @@
-package com.hello.money.v1.controller;
+package com.hello.money.v1.controller.mapper;
 
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.dto.*;
@@ -10,7 +10,11 @@ public interface MoneyMapper {
 
   @Mapping(source = "account.id", target = "accountId")
   @Mapping(source = "account.name", target = "accountName")
-  AccountDto toAccountDto(Account account);
+  CreateWalletServiceDto toCreateWalletServiceDto(Account account);
+
+  @Mapping(source = "account.id", target = "accountId")
+  @Mapping(source = "account.name", target = "accountName")
+  GetWalletServiceDto toGetWalletServiceDto(Account account);
 
   @Mapping(source = "account.id", target = "accountId")
   @Mapping(source = "account.name", target = "accountName")

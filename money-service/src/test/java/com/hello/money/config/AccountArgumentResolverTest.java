@@ -2,8 +2,8 @@ package com.hello.money.config;
 
 import com.hello.money.config.auth.AccountArgumentResolver;
 import com.hello.money.v1.controller.MoneyController;
-import com.hello.money.v1.controller.MoneyMapper;
 import com.hello.money.v1.dto.Account;
+import com.hello.money.v1.controller.mapper.MoneyMapper;
 import com.hello.money.v1.service.MoneyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.when;
 class AccountArgumentResolverTest {
 
   @MockBean
-  MoneyService moneyService;
+  private MoneyService moneyService;
 
   @MockBean
-  MoneyMapper mapper;
+  private MoneyMapper mapper;
 
   @Mock
   private MethodParameter parameter;

@@ -13,7 +13,7 @@ public class MoneyServiceImpl implements MoneyService {
   private final WalletPort walletPort;
 
   @Override
-  public Wallet createWallet(final AccountDto dto) {
+  public Wallet createWallet(final CreateWalletServiceDto dto) {
     if (isExistsWallet(dto.accountId())) {
       throw new IllegalArgumentException("해당 계정에 대한 지갑이 이미 존재합니다.");
     }
@@ -21,7 +21,7 @@ public class MoneyServiceImpl implements MoneyService {
   }
 
   @Override
-  public Wallet getWallet(final AccountDto dto) {
+  public Wallet getWallet(final GetWalletServiceDto dto) {
     return walletPort.findWalletByAccountId(dto.accountId());
   }
 

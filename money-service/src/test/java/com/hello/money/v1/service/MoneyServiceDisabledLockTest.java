@@ -2,7 +2,6 @@ package com.hello.money.v1.service;
 
 import com.hello.money.config.DisabledDistributedLock;
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.AccountDto;
 import com.hello.money.v1.dto.ChargeMoneyServiceDto;
 import com.hello.money.v1.dto.SendMoneyServiceDto;
 import com.hello.money.v1.repository.TransactionRepository;
@@ -61,7 +60,7 @@ class MoneyServiceDisabledLockTest {
   @DisplayName("머니충전 동시 요청 시 race condition 발생으로 잔액이 기대와 다르다.")
   void 머니충전_동시에_1000번_요청_후_잔액_확인(final ChargeMoneyServiceDto dto) throws InterruptedException {
     //given
-    moneyService.createWallet(new AccountDto(dto.accountId(), dto.accountName()));
+    walletPort.saveWallet(new Wallet(dto.accountId()));
 
     //when
     final int threadCount = 1000;
