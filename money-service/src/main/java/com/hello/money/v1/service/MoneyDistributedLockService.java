@@ -28,9 +28,8 @@ public class MoneyDistributedLockService {
     final Transaction transaction = getSavedTransaction(wallet, dto);
     try {
       transactionService.executeCharge(wallet, transaction);
-    } catch (RuntimeException e) {
-      transaction.fail();
-      transactionPort.saveTransaction(transaction);
+    } catch (Exception e) {
+      transactionService.saveFailedTransaction(transaction);
       throw new RuntimeException("Failed to charge money", e);
     }
     return walletPort.findWalletById(walletId);
@@ -57,11 +56,9 @@ public class MoneyDistributedLockService {
 
     try {
       transactionService.executeSend(senderWallet, senderTransaction, receiverWallet, receiverTransaction);
-    } catch (RuntimeException e) {
-      senderTransaction.fail();
-      transactionPort.saveTransaction(senderTransaction);
-      receiverTransaction.fail();
-      transactionPort.saveTransaction(receiverTransaction);
+    } catch (Exception e) {
+      transactionService.saveFailedTransaction(senderTransaction);
+      transactionService.saveFailedTransaction(receiverTransaction);
       throw new RuntimeException("Failed to send money", e);
     }
     return walletPort.findWalletById(walletId);
