@@ -53,7 +53,7 @@ class MoneyServiceWithLockTest {
             arguments(new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요")));
   }
 
-  private static Stream<Arguments> chargeMoneyAndsendMoneyServiceDtoParam() {
+  private static Stream<Arguments> chargeMoneyAndSendMoneyServiceDtoParam() {
     return Stream.of(
             arguments(
                     new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"),
@@ -136,7 +136,7 @@ class MoneyServiceWithLockTest {
   }
 
   @ParameterizedTest
-  @MethodSource("chargeMoneyAndsendMoneyServiceDtoParam")
+  @MethodSource("chargeMoneyAndSendMoneyServiceDtoParam")
   @DisplayName("@DistributedMultiLock 적용한 머니충전 및 머니송금 동시 요청 시 잔액이 기대와 같다.")
   void 분산_락_머니충전_머니송금_동시에_300번_요청_후_잔액_확인(
           final SendMoneyServiceDto dto1,

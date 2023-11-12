@@ -36,11 +36,12 @@ public class MoneyDistributedLockService {
   }
 
   private Transaction getSavedTransaction(final Wallet wallet, final ChargeMoneyServiceDto dto) {
-    return transactionPort.saveTransaction(new Transaction(
-            wallet,
-            wallet.getId(),
-            dto.amount(),
-            dto.summary()));
+    return transactionPort.saveTransaction(
+            new Transaction(
+                    wallet,
+                    wallet.getId(),
+                    dto.amount(),
+                    dto.summary()));
   }
 
   @DistributedMultiLock(keys = {"#walletId", "#dto.receiverWalletId()"})
@@ -92,10 +93,11 @@ public class MoneyDistributedLockService {
   }
 
   private Transaction getSavedTransaction(final Wallet wallet, final SendMoneyServiceDto dto) {
-    return transactionPort.saveTransaction(new Transaction(
-            wallet,
-            dto.receiverWalletId(),
-            dto.amount(),
-            dto.summary()));
+    return transactionPort.saveTransaction(
+            new Transaction(
+                    wallet,
+                    dto.receiverWalletId(),
+                    dto.amount(),
+                    dto.summary()));
   }
 }
