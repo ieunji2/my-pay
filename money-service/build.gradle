@@ -3,21 +3,26 @@ buildscript {
         set('springframeworkBootPlugin', Versions.springframeworkBootPlugin)
         set('springDependencyManagementPlugin', Versions.springDependencyManagementPlugin)
         set('asciidoctorPlugin', Versions.asciidoctorPlugin)
+
+        set('javaVersion', Versions.java)
+        set('guavaVersion', Versions.guava)
+        set('redissonVersion', Versions.redisson)
+        set('mapstructVersion', Versions.mapstruct)
     }
 }
 
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "$springframeworkBootPlugin"
-    id 'io.spring.dependency-management' version "$springDependencyManagementPlugin"
-    id "org.asciidoctor.jvm.convert" version "$asciidoctorPlugin"
+    id 'org.springframework.boot' version "${springframeworkBootPlugin}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementPlugin}"
+    id "org.asciidoctor.jvm.convert" version "${asciidoctorPlugin}"
 }
 
 group = 'com.hello.money'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = "${javaVersion}"
 }
 
 configurations {
@@ -33,21 +38,28 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'com.google.guava:guava:31.1-jre'
+
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
 
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'io.rest-assured:rest-assured'
-
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 ext {
@@ -70,7 +82,7 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
-task createDocument(type: Copy) {
+tasks.register('createDocument', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
@@ -78,7 +90,7 @@ task createDocument(type: Copy) {
 
 bootJar {
     dependsOn createDocument
-    from ("${asciidoctor.outputDir}") {
+    from("${asciidoctor.outputDir}") {
         into 'static/docs'
     }
 }

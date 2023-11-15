@@ -1,15 +1,13 @@
 package com.hello.money.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.math.BigInteger;
+import java.util.Objects;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -29,33 +27,33 @@ public class Transaction extends BaseEntity {
 
   private String summary;
 
-  private String transactionType;
+  @Enumerated(EnumType.STRING)
+  private TransactionType transactionType;
 
-  private String transactionStatus;
+  @Enumerated(EnumType.STRING)
+  private TransactionStatus transactionStatus;
 
   public Transaction(
           final Wallet wallet,
           final Long receiverWalletId,
           final BigInteger amount,
-          final String summary,
-          final String transactionType) {
+          final String summary) {
     Assert.notNull(wallet, "지갑은 필수입니다.");
     Assert.notNull(receiverWalletId, "수취인 지갑 ID는 필수입니다.");
     Assert.isTrue(amount.compareTo(BigInteger.ZERO) > 0, "금액은 0보다 커야 합니다.");
-    Assert.hasText(transactionType, "거래 유형은 필수입니다.");
     this.wallet = wallet;
     this.receiverWalletId = receiverWalletId;
     this.amount = amount;
     this.summary = summary;
-    this.transactionType = transactionType;
-    this.transactionStatus = "요청";
+    this.transactionType = Objects.equals(wallet.getId(), receiverWalletId) ? TransactionType.DEPOSIT : TransactionType.WITHDRAW;
+    this.transactionStatus = TransactionStatus.REQUEST;
   }
 
   public void success() {
-    this.transactionStatus = "정상";
+    this.transactionStatus = TransactionStatus.NORMAL;
   }
 
   public void fail() {
-    this.transactionStatus = "오류";
+    this.transactionStatus = TransactionStatus.ERROR;
   }
 }

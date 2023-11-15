@@ -1,14 +1,15 @@
 package com.hello.money.v1.service;
 
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.Account;
-import com.hello.money.v1.dto.SaveMoneyRequest;
-import com.hello.money.v1.dto.SendMoneyRequest;
-import com.hello.money.v1.dto.WalletResponse;
+import com.hello.money.v1.dto.ChargeMoneyServiceDto;
+import com.hello.money.v1.dto.CreateWalletServiceDto;
+import com.hello.money.v1.dto.GetWalletServiceDto;
+import com.hello.money.v1.dto.SendMoneyServiceDto;
 import com.hello.money.v1.repository.TransactionRepository;
 import com.hello.money.v1.repository.WalletRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,7 +40,7 @@ public class MoneyServiceTest {
   private TransactionRepository transactionRepository;
 
   @Autowired
-  private MoneyTransactionServiceExceptionTest exceptionTest;
+  private MoneyExceptionTest exceptionTest;
 
   @BeforeEach
   void setUp() {
@@ -47,116 +48,134 @@ public class MoneyServiceTest {
     transactionRepository.deleteAll();
   }
 
-  private static Stream<Arguments> accountParam() {
+  private static Stream<Arguments> createWalletServiceDtoParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름")));
+            arguments(new CreateWalletServiceDto(1L, "이름")));
   }
 
-  private static Stream<Arguments> saveMoneyRequestParam() {
+  private static Stream<Arguments> getWalletServiceDtoParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SaveMoneyRequest(BigInteger.valueOf(3000), "적요")));
+            arguments(new GetWalletServiceDto(1L, "이름")));
   }
 
-  private static Stream<Arguments> sendMoneyRequestParam() {
+  private static Stream<Arguments> chargeMoneyServiceDtoParam() {
     return Stream.of(
-            arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요")));
+            arguments(new ChargeMoneyServiceDto(1L, "이름", BigInteger.valueOf(3000), "적요")));
   }
 
-  void 지갑생성(final Account account) {
-    //given, when
-    final WalletResponse response = moneyService.createWallet(account);
-
-    //then
-    assertThat(response.accountId()).isEqualTo(account.id());
-    assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
+  private static Stream<Arguments> sendMoneyServiceDtoParam() {
+    return Stream.of(
+            arguments(new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.valueOf(2000), "적요")));
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
-  void 계정에_해당하는_지갑이_있는지_확인(final Account account) {
+  @MethodSource("createWalletServiceDtoParam")
+  @DisplayName("지갑을 생성한다")
+  void 지갑생성(final CreateWalletServiceDto dto) {
+    //given, when
+    final Wallet wallet = moneyService.createWallet(dto);
+
+    //then
+    assertThat(wallet.getAccountId()).isEqualTo(dto.accountId());
+    assertThat(wallet.getBalance()).isEqualTo(BigInteger.ZERO);
+  }
+
+  @ParameterizedTest
+  @MethodSource("createWalletServiceDtoParam")
+  @DisplayName("지갑 생성 후 계정 아이디로 지갑이 있는지 확인한다.")
+  void 지갑_있는지_확인(final CreateWalletServiceDto dto) {
     //given
-    지갑생성(account);
+    walletPort.saveWallet(new Wallet(dto.accountId()));
 
     //when
-    final boolean existsed = walletPort.existsWalletByAccountId(account.id());
+    final boolean exists = walletPort.existsWalletByAccountId(dto.accountId());
 
     //then
-    assertThat(existsed).isTrue();
+    assertThat(exists).isTrue();
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
-  void 같은_계정으로_지갑_생성시_오류(final Account account) {
+  @MethodSource("createWalletServiceDtoParam")
+  @DisplayName("동일한 계정으로 지갑 중복 생성 시 예외가 발생한다.")
+  void 지갑_중복_생성_예외_발생(final CreateWalletServiceDto dto) {
     //given
-    지갑생성(account);
+    moneyService.createWallet(dto);
 
     //when, then
     assertThatThrownBy(() -> {
-      지갑생성(account);
+      moneyService.createWallet(dto);
     }).isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
-  void 지갑조회(final Account account) {
+  @MethodSource("createWalletServiceDtoParam")
+  @DisplayName("지갑 생성 후 지갑을 조회한다.")
+  void 지갑조회(final CreateWalletServiceDto dto) {
     //given
-    지갑생성(account);
+    moneyService.createWallet(dto);
 
     //when
-    final WalletResponse response = moneyService.getWallet(account);
+    final Wallet wallet = moneyService.getWallet(new GetWalletServiceDto(dto.accountId(), dto.accountName()));
 
     //then
-    assertThat(response.accountId()).isEqualTo(account.id());
-    assertThat(response.balance()).isEqualTo(BigInteger.ZERO);
+    assertThat(wallet.getAccountId()).isEqualTo(dto.accountId());
+    assertThat(wallet.getBalance()).isEqualTo(BigInteger.ZERO);
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
-  void 계정에_해당하는_지갑이_없으면_조회시_오류(final Account account) {
+  @MethodSource("getWalletServiceDtoParam")
+  @DisplayName("계정에 해당하는 지갑이 없으면 조회 시 예외가 발생한다.")
+  void 지갑조회_예외_발생(final GetWalletServiceDto dto) {
     //given, when, then
     assertThatThrownBy(() -> {
-      moneyService.getWallet(account);
+      moneyService.getWallet(dto);
     }).isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
-  void 머니충전(final Account account, final SaveMoneyRequest request) {
+  @MethodSource("chargeMoneyServiceDtoParam")
+  @DisplayName("지갑 생성 후 금액을 충전한다.")
+  void 머니충전(final ChargeMoneyServiceDto dto) {
     //given
-    지갑생성(account);
+    walletPort.saveWallet(new Wallet(dto.accountId()));
 
     //when
-    final WalletResponse response = moneyService.saveMoney(account, request);
+    final Wallet wallet = moneyService.chargeMoney(dto);
 
     //then
-    assertThat(response.accountId()).isEqualTo(account.id());
-    assertThat(response.balance()).isEqualTo(request.amount());
+    assertThat(wallet.getAccountId()).isEqualTo(dto.accountId());
+    assertThat(wallet.getBalance()).isEqualTo(dto.amount());
   }
 
-  @Test
-  void 충전_금액이_0보다_크지_않으면_AddMoneyRequest_생성시_오류() {
+  @ParameterizedTest
+  @MethodSource("chargeMoneyServiceDtoParam")
+  @DisplayName("충전 금액이 0보다 크지 않으면 ChargeMoneyServiceDto 생성 시 예외가 발생한다.")
+  void ChargeMoneyServiceDto_생성_예외_발생(final ChargeMoneyServiceDto dto) {
     //given
     final BigInteger amount = BigInteger.ZERO;
 
     //when, then
     assertThatThrownBy(() -> {
-      new SaveMoneyRequest(amount, "적요");
-    }).isInstanceOf(IllegalArgumentException.class);
+      new ChargeMoneyServiceDto(
+              dto.accountId(),
+              dto.accountName(),
+              amount,
+              dto.summary());
+    }).isInstanceOf(ConstraintViolationException.class);
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
-  void 머니충전_오류_발생시_saveWallet_롤백(final Account account, final SaveMoneyRequest request) {
+  @MethodSource("chargeMoneyServiceDtoParam")
+  @DisplayName("머니충전의 executeSave()에서 예외 발생 시 롤백된다.")
+  void 머니충전_예외_발생_시_잔액_충전_안됨(final ChargeMoneyServiceDto dto) {
     //given
-    지갑생성(account);
+    final Wallet wallet = walletPort.saveWallet(new Wallet(dto.accountId()));
 
-    final Wallet wallet = walletPort.findWalletByAccountId(account.id());
-
-    wallet.addMoney(request.amount());
+    wallet.addMoney(dto.amount());
 
     //when
     assertThatThrownBy(() -> {
-      exceptionTest.executeSave(wallet);
+      exceptionTest.executeCharge(wallet);
     }).isInstanceOf(RuntimeException.class).hasMessage("Rollback executeSave");
 
     final Wallet savedWallet = walletPort.findWalletById(wallet.getId());
@@ -166,68 +185,71 @@ public class MoneyServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("saveMoneyRequestParam")
-  void 동일한_Bean_안에_상위_메서드가_Transactional_어노테이션이_없으면_하위에는_선언이_되어_있어도_전이되지_않는다(
-          final Account account,
-          final SaveMoneyRequest request) {
+  @MethodSource("chargeMoneyServiceDtoParam")
+  @DisplayName("동일한 Bean 안에서 상위 메서드에 Transactional 어노테이션이 없으면 하위에 선언되어 있어도 전이되지 않는다.")
+  void 머니충전_예외_발생_시_잔액_충전_됨(final ChargeMoneyServiceDto dto) {
     //given
-    지갑생성(account);
+    final Wallet wallet = walletPort.saveWallet(new Wallet(dto.accountId()));
 
-    final Wallet wallet = walletPort.findWalletByAccountId(account.id());
-
-    wallet.addMoney(request.amount());
+    wallet.addMoney(dto.amount());
 
     //when
     assertThatThrownBy(() -> {
-      executeSave(wallet);
+      executeCharge(wallet);
     }).isInstanceOf(RuntimeException.class).hasMessage("Transactional not working");
 
     final Wallet savedWallet = walletPort.findWalletById(wallet.getId());
 
     //then
-    assertThat(savedWallet.getBalance()).isEqualTo(request.amount());
+    assertThat(savedWallet.getBalance()).isEqualTo(dto.amount());
   }
 
   @Transactional
-  public void executeSave(final Wallet wallet) {
+  public void executeCharge(final Wallet wallet) {
     walletPort.saveWallet(wallet);
     throw new RuntimeException("Transactional not working");
   }
 
   @ParameterizedTest
-  @MethodSource("sendMoneyRequestParam")
-  void 송금하기(final Account account, final SendMoneyRequest request) {
+  @MethodSource("sendMoneyServiceDtoParam")
+  @DisplayName("지갑생성 및 머니충전 후 금액을 송금한다.")
+  void 머니송금(final SendMoneyServiceDto dto) {
     //given
-    머니충전(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
-    지갑생성(new Account(2L, "이름2"));
+    moneyService.createWallet(new CreateWalletServiceDto(dto.accountId(), dto.accountName()));
+    moneyService.chargeMoney(new ChargeMoneyServiceDto(dto.accountId(), dto.accountName(), BigInteger.valueOf(3000), "적요"));
 
-    final Wallet receiverWallet = walletPort.findWalletByAccountId(2L);
+    final Wallet receiverWallet = moneyService.createWallet(new CreateWalletServiceDto(2L, "이름2"));
 
     //when
-    final WalletResponse senderWallet = moneyService.sendMoney(account, new SendMoneyRequest(
+    final Wallet senderWallet = moneyService.sendMoney(new SendMoneyServiceDto(
+            dto.accountId(),
+            dto.accountName(),
             receiverWallet.getId(),
-            request.amount(),
-            request.summary()));
+            dto.amount(),
+            dto.summary()));
 
     final Wallet savedReceiverWallet = walletPort.findWalletById(receiverWallet.getId());
 
     //then
-    assertThat(senderWallet.balance()).isEqualTo(BigInteger.valueOf(1000));
+    assertThat(senderWallet.getBalance()).isEqualTo(BigInteger.valueOf(1000));
     assertThat(savedReceiverWallet.getBalance()).isEqualTo(BigInteger.valueOf(2000));
   }
 
   @ParameterizedTest
-  @MethodSource("sendMoneyRequestParam")
-  void 송금하기_오류_발생시_saveWallet_롤백(final Account account, final SendMoneyRequest request) {
+  @MethodSource("sendMoneyServiceDtoParam")
+  @DisplayName("머니송금의 executeSend()에서 예외 발생 시 롤백된다.")
+  void 머니송금_예외_발생_시_잔액_변경_안됨(final SendMoneyServiceDto dto) {
     //given
-    머니충전(account, new SaveMoneyRequest(BigInteger.valueOf(3000), "적요"));
-    지갑생성(new Account(2L, "이름2"));
+    moneyService.createWallet(new CreateWalletServiceDto(dto.accountId(), dto.accountName()));
+    moneyService.chargeMoney(new ChargeMoneyServiceDto(dto.accountId(), dto.accountName(), BigInteger.valueOf(3000), "적요"));
 
-    final Wallet senderWallet = walletPort.findWalletByAccountId(account.id());
+    moneyService.createWallet(new CreateWalletServiceDto(2L, "이름2"));
+
+    final Wallet senderWallet = walletPort.findWalletByAccountId(dto.accountId());
     final Wallet receiverWallet = walletPort.findWalletByAccountId(2L);
 
-    senderWallet.addMoney(request.amount().negate());
-    receiverWallet.addMoney(request.amount());
+    senderWallet.subtractMoney(dto.amount());
+    receiverWallet.addMoney(dto.amount());
 
     //when
     assertThatThrownBy(() -> {

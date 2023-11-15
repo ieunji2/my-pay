@@ -5,16 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class MoneyTransactionServiceExceptionTest {
+public class MoneyExceptionTest {
 
   private final WalletPort walletPort;
 
-  public MoneyTransactionServiceExceptionTest(final WalletPort walletPort) {
+  public MoneyExceptionTest(final WalletPort walletPort) {
     this.walletPort = walletPort;
   }
 
   @Transactional
-  public void executeSave(final Wallet wallet) {
+  public void executeCharge(final Wallet wallet) {
     walletPort.saveWallet(wallet);
     throw new RuntimeException("Rollback executeSave");
   }
