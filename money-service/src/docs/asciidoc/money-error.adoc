@@ -1,0 +1,11 @@
+== 오류 응답(Error)
+머니 서비스 기능에 대한 오류 응답을 제공합니다.
+
+=== 지갑 중복 생성 오류
+operation::money-api-test/check-wallet-already-exists-exception-error-response[snippets='http-request,http-response,request-headers,response-fields']
+
+=== 존재하지 않는 지갑 조회 오류
+operation::money-api-test/check-wallet-not-found-exception-error-response[snippets='http-request,http-response,request-headers,response-fields']
+
+=== 입력값 유효성 검증 오류
+operation::money-api-test/check-constraint-violation-exception-error-response[snippets='http-request,http-response,request-headers,request-fields,response-fields']

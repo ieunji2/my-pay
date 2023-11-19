@@ -1,7 +1,11 @@
 package com.hello.money.v1.service;
 
+import com.hello.money.common.exception.WalletAlreadyExistsException;
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.*;
+import com.hello.money.v1.dto.ChargeMoneyServiceDto;
+import com.hello.money.v1.dto.CreateWalletServiceDto;
+import com.hello.money.v1.dto.GetWalletServiceDto;
+import com.hello.money.v1.dto.SendMoneyServiceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +19,7 @@ public class MoneyServiceImpl implements MoneyService {
   @Override
   public Wallet createWallet(final CreateWalletServiceDto dto) {
     if (isExistsWallet(dto.accountId())) {
-      throw new IllegalArgumentException("해당 계정에 대한 지갑이 이미 존재합니다.");
+      throw new WalletAlreadyExistsException("해당 계정에 대한 지갑이 이미 존재합니다.");
     }
     return walletPort.saveWallet(new Wallet(dto.accountId()));
   }

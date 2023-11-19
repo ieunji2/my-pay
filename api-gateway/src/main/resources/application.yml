@@ -14,15 +14,15 @@ spring:
         - id: money-service
           uri: http://localhost:10000/
           predicates:
-            - Path=/moneys/health/ping
+            - Path=/money/health/ping
             - Method=GET
           filters:
-            - RewritePath=/moneys/?(?<segment>.*), /$\{segment}
+            - RewritePath=/money/?(?<segment>.*), /$\{segment}
         - id: money-service
           uri: http://localhost:10000/
           predicates:
-            - Path=/moneys/**
+            - Path=/money/**
           filters:
-            - RewritePath=/moneys/?(?<segment>.*), /$\{segment}
+            - RewritePath=/money/?(?<segment>.*), /$\{segment}
             - PreAuthGatewayFilter
             - PostAuthGatewayFilter

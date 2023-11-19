@@ -12,5 +12,8 @@ Money Service의 API 문서입니다.
 
 == API
 
-//머니
-include::moneys.adoc[]
+//머니 정상 응답
+include::money-success.adoc[]
+
+//머니 오류 응답
+include::money-error.adoc[]

@@ -1,10 +1,9 @@
 package com.hello.money;
 
+import com.hello.money.common.exception.ErrorCode;
 import com.hello.money.v1.dto.Account;
 import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
-import io.restassured.RestAssured;
-import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,14 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document;
 
 class MoneyApiTest extends ApiTest {
 
@@ -40,6 +36,11 @@ class MoneyApiTest extends ApiTest {
             arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요")));
   }
 
+  private static Stream<Arguments> sendMoneyRequestInvalidInputValueParam() {
+    return Stream.of(
+            arguments(new Account(1L, "이름"), new SendMoneyRequest(null, BigInteger.ZERO, "적요")));
+  }
+
   @ParameterizedTest
   @MethodSource("accountParam")
   @DisplayName("인증된 계정의 아이디로 지갑을 생성한다")
@@ -47,14 +48,14 @@ class MoneyApiTest extends ApiTest {
     //given, when
     final Snippet[] snippets = {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
-            SnippetsConstants.RESPONSE_FIELDS_SNIPPET};
+            SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     final var response = getFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .header("x-account-id", encode(String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
             .when()
-            .post("/v1/moneys")
+            .post("/v1/money")
             .then().log().all()
             .extract();
 
@@ -73,14 +74,14 @@ class MoneyApiTest extends ApiTest {
 
     final Snippet[] snippets = {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
-            SnippetsConstants.RESPONSE_FIELDS_SNIPPET};
+            SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
     final var response = getFilter(snippets)
             .header("x-account-id", encode(String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
             .when()
-            .get("/v1/moneys")
+            .get("/v1/money")
             .then().log().all()
             .extract();
 
@@ -100,7 +101,7 @@ class MoneyApiTest extends ApiTest {
     final Snippet[] snippets = {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
             SnippetsConstants.REQUEST_FIELDS_SNIPPET,
-            SnippetsConstants.RESPONSE_FIELDS_SNIPPET};
+            SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
     final var response = getFilter(snippets)
@@ -109,7 +110,7 @@ class MoneyApiTest extends ApiTest {
             .header("x-account-name", encode(account.name()))
             .body(request)
             .when()
-            .post("/v1/moneys/charge")
+            .post("/v1/money/charge")
             .then().log().all()
             .extract();
 
@@ -131,7 +132,7 @@ class MoneyApiTest extends ApiTest {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
             SnippetsConstants.REQUEST_FIELDS_SNIPPET.and(
                     fieldWithPath("receiverWalletId").description("수취인 지갑 아이디")),
-            SnippetsConstants.RESPONSE_FIELDS_SNIPPET};
+            SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
     final var response = getFilter(snippets)
@@ -140,7 +141,7 @@ class MoneyApiTest extends ApiTest {
             .header("x-account-name", encode(account.name()))
             .body(request)
             .when()
-            .post("/v1/moneys/send")
+            .post("/v1/money/send")
             .then().log().all()
             .extract();
 
@@ -149,15 +150,85 @@ class MoneyApiTest extends ApiTest {
     assertThat(response.jsonPath().getString("balance")).isEqualTo("1000");
   }
 
-  private String encode(String value) {
-    return URLEncoder.encode(value, StandardCharsets.UTF_8);
+  @ParameterizedTest
+  @MethodSource("accountParam")
+  @DisplayName("지갑이 이미 존재하는 경우 지갑 생성 시 오류 응답을 반환한다")
+  void checkWalletAlreadyExistsExceptionErrorResponse(final Account account) {
+    //given, when
+    createWallet(account);
+
+    final Snippet[] snippets = {
+            SnippetsConstants.REQUEST_HEADERS_SNIPPET,
+            SnippetsConstants.ERROR_RESPONSE_FIELDS_SNIPPET};
+
+    final var response = getFilter(snippets)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("x-account-id", encode(String.valueOf(account.id())))
+            .header("x-account-name", encode(account.name()))
+            .when()
+            .post("/v1/money")
+            .then().log().all()
+            .extract();
+
+    //then
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getStatus());
+    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getCode());
+    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getMessage());
   }
 
-  private RequestSpecification getFilter(Snippet... snippets) {
-    return RestAssured.given(spec).log().all()
-                      .filter(
-                              document(
-                                      SnippetsConstants.IDENTIFIER,
-                                      snippets));
+  @ParameterizedTest
+  @MethodSource("accountParam")
+  @DisplayName("지갑 조회 시 없으면 오류 응답을 반환한다")
+  void checkWalletNotFoundExceptionErrorResponse(final Account account) {
+    //given
+    final Snippet[] snippets = {
+            SnippetsConstants.REQUEST_HEADERS_SNIPPET,
+            SnippetsConstants.ERROR_RESPONSE_FIELDS_SNIPPET};
+
+    //when
+    final var response = getFilter(snippets)
+            .header("x-account-id", encode(String.valueOf(account.id())))
+            .header("x-account-name", encode(account.name()))
+            .when()
+            .get("/v1/money")
+            .then().log().all()
+            .extract();
+
+    //then
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getStatus());
+    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getCode());
+    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getMessage());
+  }
+
+  @ParameterizedTest
+  @MethodSource("sendMoneyRequestInvalidInputValueParam")
+  @DisplayName("유효하지 않은 값으로 금액 송금 시 오류 응답을 반환한다")
+  void checkConstraintViolationExceptionErrorResponse(final Account account, final SendMoneyRequest request) {
+    //given
+    chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
+    createWallet(new Account(2L, "이름2"));
+
+    final Snippet[] snippets = {
+            SnippetsConstants.REQUEST_HEADERS_SNIPPET,
+            SnippetsConstants.REQUEST_FIELDS_SNIPPET.and(
+                    fieldWithPath("receiverWalletId").description("수취인 지갑 아이디")),
+            SnippetsConstants.ERROR_RESPONSE_FIELDS_SNIPPET};
+
+    //when
+    final var response = getFilter(snippets)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("x-account-id", encode(String.valueOf(account.id())))
+            .header("x-account-name", encode(account.name()))
+            .body(request)
+            .when()
+            .post("/v1/money/send")
+            .then().log().all()
+            .extract();
+
+    //then
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getCode());
+    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+    assertThat(response.jsonPath().getList("errors")).hasSize(2);
   }
 }

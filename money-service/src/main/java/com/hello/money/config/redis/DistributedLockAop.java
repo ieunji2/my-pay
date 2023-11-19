@@ -1,5 +1,6 @@
 package com.hello.money.config.redis;
 
+import com.hello.money.common.exception.RedisLockAcquisitionFailedException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -38,9 +39,8 @@ public class DistributedLockAop {
 
     try {
       if (!lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit())) {
-        throw new RuntimeException("Failed to acquire lock");
+        throw new RedisLockAcquisitionFailedException("Failed to acquire lock");
       }
-
       return joinPoint.proceed();
     } finally {
       if (lock.isLocked() && lock.isHeldByCurrentThread()) {

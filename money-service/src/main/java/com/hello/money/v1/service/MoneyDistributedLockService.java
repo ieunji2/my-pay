@@ -1,5 +1,9 @@
 package com.hello.money.v1.service;
 
+import com.hello.money.common.exception.ChargeTransactionFailedException;
+import com.hello.money.common.exception.InsufficientBalanceException;
+import com.hello.money.common.exception.InvalidAccountException;
+import com.hello.money.common.exception.SendTransactionFailedException;
 import com.hello.money.config.redis.DistributedLock;
 import com.hello.money.config.redis.DistributedMultiLock;
 import com.hello.money.domain.Transaction;
@@ -8,10 +12,8 @@ import com.hello.money.v1.dto.AccountResponse;
 import com.hello.money.v1.dto.ChargeMoneyServiceDto;
 import com.hello.money.v1.dto.SendMoneyServiceDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MoneyDistributedLockService {
@@ -30,7 +32,7 @@ public class MoneyDistributedLockService {
       transactionService.executeCharge(wallet, transaction);
     } catch (Exception e) {
       transactionService.saveFailedTransaction(transaction);
-      throw new RuntimeException("Failed to charge money", e);
+      throw new ChargeTransactionFailedException();
     }
     return walletPort.findWalletById(walletId);
   }
@@ -60,7 +62,7 @@ public class MoneyDistributedLockService {
     } catch (Exception e) {
       transactionService.saveFailedTransaction(senderTransaction);
       transactionService.saveFailedTransaction(receiverTransaction);
-      throw new RuntimeException("Failed to send money", e);
+      throw new SendTransactionFailedException();
     }
     return walletPort.findWalletById(walletId);
   }
@@ -68,7 +70,7 @@ public class MoneyDistributedLockService {
   private Wallet getSenderWallet(final SendMoneyServiceDto dto) {
     final Wallet wallet = walletPort.findWalletByAccountId(dto.accountId());
     if (dto.amount().compareTo(wallet.getBalance()) > 0) {
-      throw new IllegalArgumentException("잔액이 부족합니다.");
+      throw new InsufficientBalanceException();
     }
     return wallet;
   }
@@ -77,19 +79,13 @@ public class MoneyDistributedLockService {
     final Wallet wallet = walletPort.findWalletById(dto.receiverWalletId());
     final AccountResponse receiver = getReceiver(wallet.getAccountId());
     if (receiver == null || !receiver.isValid()) {
-      throw new IllegalArgumentException("수취인의 계정으로 송금할 수 없습니다.");
+      throw new InvalidAccountException("수취인의 계정으로 송금할 수 없습니다.");
     }
     return wallet;
   }
 
   private AccountResponse getReceiver(final Long accountId) {
-    AccountResponse response = null;
-    try {
-      response = exchangeApi.getAccount(accountId);
-    } catch (Exception e) {
-      log.error(e.toString());
-    }
-    return response;
+    return exchangeApi.getAccount(accountId);
   }
 
   private Transaction getSavedTransaction(final Wallet wallet, final SendMoneyServiceDto dto) {

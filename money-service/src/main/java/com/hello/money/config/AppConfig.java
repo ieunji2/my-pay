@@ -19,7 +19,7 @@ public class AppConfig {
             .baseUrl("http://localhost:9000")
             .defaultStatusHandler(
                     HttpStatusCode::isError,
-                    clientResponse -> Mono.just(new IllegalArgumentException("Account Service Error")))
+                    clientResponse -> Mono.just(new Exception("Account Service Error")))
             .build();
     final HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
             .builder(WebClientAdapter.forClient(client))

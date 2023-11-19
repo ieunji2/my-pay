@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>머니(Money)</title>
+<title>정상 응답(Success)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,33 +441,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_머니money">머니(Money)</h2>
+<h2 id="_정상_응답success">정상 응답(Success)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>머니에 대한 기능을 제공합니다.</p>
+<p>머니 서비스 기능에 대한 정상 응답을 제공합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="_지갑생성">지갑생성</h3>
+<h3 id="_지갑_생성">지갑 생성</h3>
 <div class="sect3">
-<h4 id="_지갑생성_http_request">HTTP request</h4>
+<h4 id="_지갑_생성_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/moneys HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:64733</code></pre>
+Host: localhost:65328</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑생성_http_response">HTTP response</h4>
+<h4 id="_지갑_생성_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 19 Oct 2023 13:01:11 GMT
+Date: Sun, 19 Nov 2023 08:09:24 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -481,7 +481,7 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑생성_request_headers">Request headers</h4>
+<h4 id="_지갑_생성_request_headers">Request headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -506,7 +506,7 @@ Content-Length: 50
 </table>
 </div>
 <div class="sect3">
-<h4 id="_지갑생성_response_fields">Response fields</h4>
+<h4 id="_지갑_생성_response_fields">Response fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -541,26 +541,26 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect2">
-<h3 id="_지갑조회">지갑조회</h3>
+<h3 id="_지갑_조회">지갑 조회</h3>
 <div class="sect3">
-<h4 id="_지갑조회_http_request">HTTP request</h4>
+<h4 id="_지갑_조회_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /v1/moneys HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
-Host: localhost:64733</code></pre>
+Host: localhost:65328</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑조회_http_response">HTTP response</h4>
+<h4 id="_지갑_조회_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 19 Oct 2023 13:01:11 GMT
+Date: Sun, 19 Nov 2023 08:09:24 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -574,7 +574,7 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑조회_request_headers">Request headers</h4>
+<h4 id="_지갑_조회_request_headers">Request headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -599,7 +599,7 @@ Content-Length: 50
 </table>
 </div>
 <div class="sect3">
-<h4 id="_지갑조회_response_fields">Response fields</h4>
+<h4 id="_지갑_조회_response_fields">Response fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -634,16 +634,16 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect2">
-<h3 id="_머니충전">머니충전</h3>
+<h3 id="_머니_충전">머니 충전</h3>
 <div class="sect3">
-<h4 id="_머니충전_http_request">HTTP request</h4>
+<h4 id="_머니_충전_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/moneys/charge HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/money/charge HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:64733
+Host: localhost:65328
 Content-Length: 45
 
 {
@@ -654,13 +654,13 @@ Content-Length: 45
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니충전_http_response">HTTP response</h4>
+<h4 id="_머니_충전_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 19 Oct 2023 13:01:11 GMT
+Date: Sun, 19 Nov 2023 08:09:24 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -674,7 +674,7 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니충전_request_headers">Request headers</h4>
+<h4 id="_머니_충전_request_headers">Request headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -699,7 +699,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니충전_request_fields">Request fields</h4>
+<h4 id="_머니_충전_request_fields">Request fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -728,7 +728,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니충전_response_fields">Response fields</h4>
+<h4 id="_머니_충전_response_fields">Response fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -763,16 +763,16 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect2">
-<h3 id="_머니송금">머니송금</h3>
+<h3 id="_머니_송금">머니 송금</h3>
 <div class="sect3">
-<h4 id="_머니송금_http_request">HTTP request</h4>
+<h4 id="_머니_송금_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/moneys/send HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /v1/money/send HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:64733
+Host: localhost:65328
 Content-Length: 71
 
 {
@@ -784,13 +784,13 @@ Content-Length: 71
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니송금_http_response">HTTP response</h4>
+<h4 id="_머니_송금_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 19 Oct 2023 13:01:11 GMT
+Date: Sun, 19 Nov 2023 08:09:24 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -804,7 +804,7 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니송금_request_headers">Request headers</h4>
+<h4 id="_머니_송금_request_headers">Request headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -829,7 +829,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니송금_request_fields">Request fields</h4>
+<h4 id="_머니_송금_request_fields">Request fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -863,7 +863,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니송금_response_fields">Response fields</h4>
+<h4 id="_머니_송금_response_fields">Response fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -903,7 +903,7 @@ Content-Length: 53
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-10-19 21:55:45 +0900
+Last updated 2023-11-19 15:21:57 +0900
 </div>
 </div>
 </body>
