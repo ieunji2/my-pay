@@ -9,3 +9,6 @@ operation::money-api-test/check-wallet-not-found-exception-error-response[snippe
 
 === 입력값 유효성 검증 오류
 operation::money-api-test/check-constraint-violation-exception-error-response[snippets='http-request,http-response,request-headers,request-fields,response-fields']
+
+=== 요청 핸들러 찾을 수 없는 오류
+operation::money-api-test/check-no-handler-found-exception[snippets='http-request,http-response,response-fields']

@@ -5,6 +5,7 @@ import com.hello.money.v1.dto.Account;
 import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -230,5 +231,27 @@ class MoneyApiTest extends ApiTest {
     assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getCode());
     assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
     assertThat(response.jsonPath().getList("errors")).hasSize(2);
+  }
+
+  @Test
+  @DisplayName("요청 핸들러를 찾을 수 없으면 오류 응답을 반환한다")
+  void checkNoHandlerFoundException() {
+    //given
+    final String noMappingPath = "/v1/test";
+
+    final Snippet[] snippets = {
+            SnippetsConstants.ERROR_RESPONSE_FIELDS_SNIPPET};
+
+    //when
+    final var response = getFilter(snippets)
+            .when()
+            .get(noMappingPath)
+            .then().log().all()
+            .extract();
+
+    //then
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.NOT_FOUND.getStatus());
+    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.NOT_FOUND.getCode());
+    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.NOT_FOUND.getMessage());
   }
 }

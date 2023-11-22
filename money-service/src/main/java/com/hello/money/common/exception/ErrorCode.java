@@ -6,11 +6,12 @@ import lombok.Getter;
 public enum ErrorCode {
 
   INTERNAL_SERVER_ERROR(500, "M001", "Server Error"),
-  INVALID_INPUT_VALUE(400, "M002", "Invalid Input Value"),
-  WALLET_ALREADY_EXISTS(400, "M003", "Wallet Already Exists"),
-  WALLET_NOT_FOUND(400, "M004", "Wallet Not Found"),
-  INSUFFICIENT_BALANCE(400, "M005", "Insufficient Balance"),
-  INVALID_ACCOUNT(400, "M006", "Invalid Account"),
+  NOT_FOUND(404, "M002", "Not Found"),
+  INVALID_INPUT_VALUE(400, "M003", "Invalid Input Value"),
+  WALLET_ALREADY_EXISTS(400, "M004", "Wallet Already Exists"),
+  WALLET_NOT_FOUND(400, "M005", "Wallet Not Found"),
+  INSUFFICIENT_BALANCE(400, "M006", "Insufficient Balance"),
+  INVALID_ACCOUNT(400, "M007", "Invalid Account"),
   ;
 
   private final int status;
