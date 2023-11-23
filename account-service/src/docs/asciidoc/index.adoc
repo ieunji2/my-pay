@@ -12,8 +12,15 @@ Account Service의 API 문서입니다.
 
 == API
 
-//계정
-include::accounts.adoc[]
+== 계정(Account)
+
+//계정 정상 응답
+include::accounts-success.adoc[]
+
+//계정 오류 응답
+include::accounts-error.adoc[]
+
+== 인증(Auth)
 
 //인증
 include::auths.adoc[]

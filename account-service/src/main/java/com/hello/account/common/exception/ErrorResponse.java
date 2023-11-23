@@ -1,4 +1,4 @@
-package com.hello.money.common.exception;
+package com.hello.account.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.ConstraintViolationException;

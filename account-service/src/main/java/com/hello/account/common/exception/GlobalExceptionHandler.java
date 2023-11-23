@@ -1,4 +1,4 @@
-package com.hello.money.common.exception;
+package com.hello.account.common.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

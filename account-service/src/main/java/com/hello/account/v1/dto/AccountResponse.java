@@ -1,14 +1,14 @@
 package com.hello.account.v1.dto;
 
 import com.hello.account.domain.Account;
-import org.springframework.util.Assert;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record AccountResponse(Long id, String name, String email, boolean isValid) {
-  public AccountResponse {
-    Assert.notNull(id, "계정 ID는 필수입니다.");
-    Assert.hasText(name, "이름은 필수입니다.");
-    Assert.hasText(email, "이메일은 필수입니다.");
-  }
+public record AccountResponse(
+        @NotNull Long id,
+        @NotBlank String name,
+        @NotBlank String email,
+        boolean isValid) {
 
   public AccountResponse(final Account account) {
     this(

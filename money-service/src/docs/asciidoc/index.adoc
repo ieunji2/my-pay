@@ -12,6 +12,8 @@ Money Service의 API 문서입니다.
 
 == API
 
+== 머니(Money)
+
 //머니 정상 응답
 include::money-success.adoc[]
 

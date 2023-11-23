@@ -1,8 +1,11 @@
 buildscript {
     ext {
-        set('springframeworkBootPlugin', Versions.springframeworkBootPlugin)
-        set('springDependencyManagementPlugin', Versions.springDependencyManagementPlugin)
-        set('asciidoctorPlugin', Versions.asciidoctorPlugin)
+        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
+        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
+        set('asciidoctorPlugin', Versions.ASCIIDOCTOR_PLUGIN)
+
+        set('javaVersion', Versions.JAVA)
+        set('guavaVersion', Versions.GUAVA)
     }
 }
 
@@ -17,7 +20,7 @@ group = 'com.hello.account'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = "${javaVersion}"
 }
 
 configurations {
@@ -33,8 +36,9 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation "com.google.guava:guava:${guavaVersion}"
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
@@ -68,7 +72,7 @@ asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
-task createDocument(type: Copy) {
+tasks.register('createDocument', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")

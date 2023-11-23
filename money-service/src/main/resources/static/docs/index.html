@@ -448,20 +448,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_개요">1. 개요</a></li>
 <li><a href="#_api">2. API</a></li>
-<li><a href="#_정상_응답success">3. 정상 응답(Success)</a>
+<li><a href="#_머니money">3. 머니(Money)</a></li>
+<li><a href="#_정상_응답success">4. 정상 응답(Success)</a>
 <ul class="sectlevel2">
-<li><a href="#_지갑_생성">3.1. 지갑 생성</a></li>
-<li><a href="#_지갑_조회">3.2. 지갑 조회</a></li>
-<li><a href="#_머니_충전">3.3. 머니 충전</a></li>
-<li><a href="#_머니_송금">3.4. 머니 송금</a></li>
+<li><a href="#_지갑_생성">4.1. 지갑 생성</a></li>
+<li><a href="#_지갑_조회">4.2. 지갑 조회</a></li>
+<li><a href="#_머니_충전">4.3. 머니 충전</a></li>
+<li><a href="#_머니_송금">4.4. 머니 송금</a></li>
 </ul>
 </li>
-<li><a href="#_오류_응답error">4. 오류 응답(Error)</a>
+<li><a href="#_오류_응답error">5. 오류 응답(Error)</a>
 <ul class="sectlevel2">
-<li><a href="#_지갑_중복_생성_오류">4.1. 지갑 중복 생성 오류</a></li>
-<li><a href="#_존재하지_않는_지갑_조회_오류">4.2. 존재하지 않는 지갑 조회 오류</a></li>
-<li><a href="#_입력값_유효성_검증_오류">4.3. 입력값 유효성 검증 오류</a></li>
-<li><a href="#_요청_핸들러_찾을_수_없는_오류">4.4. 요청 핸들러 찾을 수 없는 오류</a></li>
+<li><a href="#_지갑_중복_생성_오류">5.1. 지갑 중복 생성 오류</a></li>
+<li><a href="#_존재하지_않는_지갑_조회_오류">5.2. 존재하지 않는 지갑 조회 오류</a></li>
+<li><a href="#_입력값_유효성_검증_오류">5.3. 입력값 유효성 검증 오류</a></li>
+<li><a href="#_요청_핸들러_찾을_수_없는_오류">5.4. 요청 핸들러 찾을 수 없는 오류</a></li>
 </ul>
 </li>
 </ul>
@@ -483,33 +484,39 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_정상_응답success"><a class="link" href="#_정상_응답success">3. 정상 응답(Success)</a></h2>
+<h2 id="_머니money"><a class="link" href="#_머니money">3. 머니(Money)</a></h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_정상_응답success"><a class="link" href="#_정상_응답success">4. 정상 응답(Success)</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>머니 서비스 기능에 대한 정상 응답을 제공합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="_지갑_생성"><a class="link" href="#_지갑_생성">3.1. 지갑 생성</a></h3>
+<h3 id="_지갑_생성"><a class="link" href="#_지갑_생성">4.1. 지갑 생성</a></h3>
 <div class="sect3">
-<h4 id="_지갑_생성_http_request"><a class="link" href="#_지갑_생성_http_request">3.1.1. HTTP request</a></h4>
+<h4 id="_지갑_생성_http_request"><a class="link" href="#_지갑_생성_http_request">4.1.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:51348</code></pre>
+Host: localhost:54060</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_생성_http_response"><a class="link" href="#_지갑_생성_http_response">3.1.2. HTTP response</a></h4>
+<h4 id="_지갑_생성_http_response"><a class="link" href="#_지갑_생성_http_response">4.1.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -523,7 +530,7 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_생성_request_headers"><a class="link" href="#_지갑_생성_request_headers">3.1.3. Request headers</a></h4>
+<h4 id="_지갑_생성_request_headers"><a class="link" href="#_지갑_생성_request_headers">4.1.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -548,7 +555,7 @@ Content-Length: 50
 </table>
 </div>
 <div class="sect3">
-<h4 id="_지갑_생성_response_fields"><a class="link" href="#_지갑_생성_response_fields">3.1.4. Response fields</a></h4>
+<h4 id="_지갑_생성_response_fields"><a class="link" href="#_지갑_생성_response_fields">4.1.4. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -583,26 +590,26 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect2">
-<h3 id="_지갑_조회"><a class="link" href="#_지갑_조회">3.2. 지갑 조회</a></h3>
+<h3 id="_지갑_조회"><a class="link" href="#_지갑_조회">4.2. 지갑 조회</a></h3>
 <div class="sect3">
-<h4 id="_지갑_조회_http_request"><a class="link" href="#_지갑_조회_http_request">3.2.1. HTTP request</a></h4>
+<h4 id="_지갑_조회_http_request"><a class="link" href="#_지갑_조회_http_request">4.2.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
-Host: localhost:51348</code></pre>
+Host: localhost:54060</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_조회_http_response"><a class="link" href="#_지갑_조회_http_response">3.2.2. HTTP response</a></h4>
+<h4 id="_지갑_조회_http_response"><a class="link" href="#_지갑_조회_http_response">4.2.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -616,7 +623,7 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_조회_request_headers"><a class="link" href="#_지갑_조회_request_headers">3.2.3. Request headers</a></h4>
+<h4 id="_지갑_조회_request_headers"><a class="link" href="#_지갑_조회_request_headers">4.2.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -641,7 +648,7 @@ Content-Length: 50
 </table>
 </div>
 <div class="sect3">
-<h4 id="_지갑_조회_response_fields"><a class="link" href="#_지갑_조회_response_fields">3.2.4. Response fields</a></h4>
+<h4 id="_지갑_조회_response_fields"><a class="link" href="#_지갑_조회_response_fields">4.2.4. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -676,16 +683,16 @@ Content-Length: 50
 </div>
 </div>
 <div class="sect2">
-<h3 id="_머니_충전"><a class="link" href="#_머니_충전">3.3. 머니 충전</a></h3>
+<h3 id="_머니_충전"><a class="link" href="#_머니_충전">4.3. 머니 충전</a></h3>
 <div class="sect3">
-<h4 id="_머니_충전_http_request"><a class="link" href="#_머니_충전_http_request">3.3.1. HTTP request</a></h4>
+<h4 id="_머니_충전_http_request"><a class="link" href="#_머니_충전_http_request">4.3.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /v1/money/charge HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:51348
+Host: localhost:54060
 Content-Length: 45
 
 {
@@ -696,13 +703,13 @@ Content-Length: 45
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니_충전_http_response"><a class="link" href="#_머니_충전_http_response">3.3.2. HTTP response</a></h4>
+<h4 id="_머니_충전_http_response"><a class="link" href="#_머니_충전_http_response">4.3.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -716,7 +723,7 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니_충전_request_headers"><a class="link" href="#_머니_충전_request_headers">3.3.3. Request headers</a></h4>
+<h4 id="_머니_충전_request_headers"><a class="link" href="#_머니_충전_request_headers">4.3.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -741,7 +748,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니_충전_request_fields"><a class="link" href="#_머니_충전_request_fields">3.3.4. Request fields</a></h4>
+<h4 id="_머니_충전_request_fields"><a class="link" href="#_머니_충전_request_fields">4.3.4. Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -770,7 +777,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니_충전_response_fields"><a class="link" href="#_머니_충전_response_fields">3.3.5. Response fields</a></h4>
+<h4 id="_머니_충전_response_fields"><a class="link" href="#_머니_충전_response_fields">4.3.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -805,16 +812,16 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect2">
-<h3 id="_머니_송금"><a class="link" href="#_머니_송금">3.4. 머니 송금</a></h3>
+<h3 id="_머니_송금"><a class="link" href="#_머니_송금">4.4. 머니 송금</a></h3>
 <div class="sect3">
-<h4 id="_머니_송금_http_request"><a class="link" href="#_머니_송금_http_request">3.4.1. HTTP request</a></h4>
+<h4 id="_머니_송금_http_request"><a class="link" href="#_머니_송금_http_request">4.4.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /v1/money/send HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:51348
+Host: localhost:54060
 Content-Length: 71
 
 {
@@ -826,13 +833,13 @@ Content-Length: 71
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니_송금_http_response"><a class="link" href="#_머니_송금_http_response">3.4.2. HTTP response</a></h4>
+<h4 id="_머니_송금_http_response"><a class="link" href="#_머니_송금_http_response">4.4.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -846,7 +853,7 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect3">
-<h4 id="_머니_송금_request_headers"><a class="link" href="#_머니_송금_request_headers">3.4.3. Request headers</a></h4>
+<h4 id="_머니_송금_request_headers"><a class="link" href="#_머니_송금_request_headers">4.4.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -871,7 +878,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니_송금_request_fields"><a class="link" href="#_머니_송금_request_fields">3.4.4. Request fields</a></h4>
+<h4 id="_머니_송금_request_fields"><a class="link" href="#_머니_송금_request_fields">4.4.4. Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -905,7 +912,7 @@ Content-Length: 53
 </table>
 </div>
 <div class="sect3">
-<h4 id="_머니_송금_response_fields"><a class="link" href="#_머니_송금_response_fields">3.4.5. Response fields</a></h4>
+<h4 id="_머니_송금_response_fields"><a class="link" href="#_머니_송금_response_fields">4.4.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -942,33 +949,33 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect1">
-<h2 id="_오류_응답error"><a class="link" href="#_오류_응답error">4. 오류 응답(Error)</a></h2>
+<h2 id="_오류_응답error"><a class="link" href="#_오류_응답error">5. 오류 응답(Error)</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>머니 서비스 기능에 대한 오류 응답을 제공합니다.</p>
 </div>
 <div class="sect2">
-<h3 id="_지갑_중복_생성_오류"><a class="link" href="#_지갑_중복_생성_오류">4.1. 지갑 중복 생성 오류</a></h3>
+<h3 id="_지갑_중복_생성_오류"><a class="link" href="#_지갑_중복_생성_오류">5.1. 지갑 중복 생성 오류</a></h3>
 <div class="sect3">
-<h4 id="_지갑_중복_생성_오류_http_request"><a class="link" href="#_지갑_중복_생성_오류_http_request">4.1.1. HTTP request</a></h4>
+<h4 id="_지갑_중복_생성_오류_http_request"><a class="link" href="#_지갑_중복_생성_오류_http_request">5.1.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:51348</code></pre>
+Host: localhost:54060</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_중복_생성_오류_http_response"><a class="link" href="#_지갑_중복_생성_오류_http_response">4.1.2. HTTP response</a></h4>
+<h4 id="_지갑_중복_생성_오류_http_response"><a class="link" href="#_지갑_중복_생성_오류_http_response">5.1.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Connection: close
 Content-Length: 78
 
@@ -981,7 +988,7 @@ Content-Length: 78
 </div>
 </div>
 <div class="sect3">
-<h4 id="_지갑_중복_생성_오류_request_headers"><a class="link" href="#_지갑_중복_생성_오류_request_headers">4.1.3. Request headers</a></h4>
+<h4 id="_지갑_중복_생성_오류_request_headers"><a class="link" href="#_지갑_중복_생성_오류_request_headers">5.1.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1006,7 +1013,7 @@ Content-Length: 78
 </table>
 </div>
 <div class="sect3">
-<h4 id="_지갑_중복_생성_오류_response_fields"><a class="link" href="#_지갑_중복_생성_오류_response_fields">4.1.4. Response fields</a></h4>
+<h4 id="_지갑_중복_생성_오류_response_fields"><a class="link" href="#_지갑_중복_생성_오류_response_fields">5.1.4. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1061,26 +1068,26 @@ Content-Length: 78
 </div>
 </div>
 <div class="sect2">
-<h3 id="_존재하지_않는_지갑_조회_오류"><a class="link" href="#_존재하지_않는_지갑_조회_오류">4.2. 존재하지 않는 지갑 조회 오류</a></h3>
+<h3 id="_존재하지_않는_지갑_조회_오류"><a class="link" href="#_존재하지_않는_지갑_조회_오류">5.2. 존재하지 않는 지갑 조회 오류</a></h3>
 <div class="sect3">
-<h4 id="_존재하지_않는_지갑_조회_오류_http_request"><a class="link" href="#_존재하지_않는_지갑_조회_오류_http_request">4.2.1. HTTP request</a></h4>
+<h4 id="_존재하지_않는_지갑_조회_오류_http_request"><a class="link" href="#_존재하지_않는_지갑_조회_오류_http_request">5.2.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
-Host: localhost:51348</code></pre>
+Host: localhost:54060</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_존재하지_않는_지갑_조회_오류_http_response"><a class="link" href="#_존재하지_않는_지갑_조회_오류_http_response">4.2.2. HTTP response</a></h4>
+<h4 id="_존재하지_않는_지갑_조회_오류_http_response"><a class="link" href="#_존재하지_않는_지갑_조회_오류_http_response">5.2.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Connection: close
 Content-Length: 73
 
@@ -1093,7 +1100,7 @@ Content-Length: 73
 </div>
 </div>
 <div class="sect3">
-<h4 id="_존재하지_않는_지갑_조회_오류_request_headers"><a class="link" href="#_존재하지_않는_지갑_조회_오류_request_headers">4.2.3. Request headers</a></h4>
+<h4 id="_존재하지_않는_지갑_조회_오류_request_headers"><a class="link" href="#_존재하지_않는_지갑_조회_오류_request_headers">5.2.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1118,7 +1125,7 @@ Content-Length: 73
 </table>
 </div>
 <div class="sect3">
-<h4 id="_존재하지_않는_지갑_조회_오류_response_fields"><a class="link" href="#_존재하지_않는_지갑_조회_오류_response_fields">4.2.4. Response fields</a></h4>
+<h4 id="_존재하지_않는_지갑_조회_오류_response_fields"><a class="link" href="#_존재하지_않는_지갑_조회_오류_response_fields">5.2.4. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1173,16 +1180,16 @@ Content-Length: 73
 </div>
 </div>
 <div class="sect2">
-<h3 id="_입력값_유효성_검증_오류"><a class="link" href="#_입력값_유효성_검증_오류">4.3. 입력값 유효성 검증 오류</a></h3>
+<h3 id="_입력값_유효성_검증_오류"><a class="link" href="#_입력값_유효성_검증_오류">5.3. 입력값 유효성 검증 오류</a></h3>
 <div class="sect3">
-<h4 id="_입력값_유효성_검증_오류_http_request"><a class="link" href="#_입력값_유효성_검증_오류_http_request">4.3.1. HTTP request</a></h4>
+<h4 id="_입력값_유효성_검증_오류_http_request"><a class="link" href="#_입력값_유효성_검증_오류_http_request">5.3.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /v1/money/send HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:51348
+Host: localhost:54060
 Content-Length: 71
 
 {
@@ -1194,13 +1201,13 @@ Content-Length: 71
 </div>
 </div>
 <div class="sect3">
-<h4 id="_입력값_유효성_검증_오류_http_response"><a class="link" href="#_입력값_유효성_검증_오류_http_response">4.3.2. HTTP response</a></h4>
+<h4 id="_입력값_유효성_검증_오류_http_response"><a class="link" href="#_입력값_유효성_검증_오류_http_response">5.3.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Connection: close
 Content-Length: 296
 
@@ -1209,20 +1216,20 @@ Content-Length: 296
   "code" : "M003",
   "message" : "Invalid Input Value",
   "errors" : [ {
-    "field" : "receiverWalletId",
-    "value" : "null",
-    "message" : "널이어서는 안됩니다"
-  }, {
     "field" : "amount",
     "value" : "0",
     "message" : "0보다 커야 합니다"
+  }, {
+    "field" : "receiverWalletId",
+    "value" : "null",
+    "message" : "널이어서는 안됩니다"
   } ]
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_입력값_유효성_검증_오류_request_headers"><a class="link" href="#_입력값_유효성_검증_오류_request_headers">4.3.3. Request headers</a></h4>
+<h4 id="_입력값_유효성_검증_오류_request_headers"><a class="link" href="#_입력값_유효성_검증_오류_request_headers">5.3.3. Request headers</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1247,7 +1254,7 @@ Content-Length: 296
 </table>
 </div>
 <div class="sect3">
-<h4 id="_입력값_유효성_검증_오류_request_fields"><a class="link" href="#_입력값_유효성_검증_오류_request_fields">4.3.4. Request fields</a></h4>
+<h4 id="_입력값_유효성_검증_오류_request_fields"><a class="link" href="#_입력값_유효성_검증_오류_request_fields">5.3.4. Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1281,7 +1288,7 @@ Content-Length: 296
 </table>
 </div>
 <div class="sect3">
-<h4 id="_입력값_유효성_검증_오류_response_fields"><a class="link" href="#_입력값_유효성_검증_오류_response_fields">4.3.5. Response fields</a></h4>
+<h4 id="_입력값_유효성_검증_오류_response_fields"><a class="link" href="#_입력값_유효성_검증_오류_response_fields">5.3.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1336,24 +1343,24 @@ Content-Length: 296
 </div>
 </div>
 <div class="sect2">
-<h3 id="_요청_핸들러_찾을_수_없는_오류"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류">4.4. 요청 핸들러 찾을 수 없는 오류</a></h3>
+<h3 id="_요청_핸들러_찾을_수_없는_오류"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류">5.4. 요청 핸들러 찾을 수 없는 오류</a></h3>
 <div class="sect3">
-<h4 id="_요청_핸들러_찾을_수_없는_오류_http_request"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_http_request">4.4.1. HTTP request</a></h4>
+<h4 id="_요청_핸들러_찾을_수_없는_오류_http_request"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_http_request">5.4.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/test HTTP/1.1
-Host: localhost:51348</code></pre>
+Host: localhost:54060</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_핸들러_찾을_수_없는_오류_http_response"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_http_response">4.4.2. HTTP response</a></h4>
+<h4 id="_요청_핸들러_찾을_수_없는_오류_http_response"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_http_response">5.4.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 404 Not Found
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Wed, 22 Nov 2023 19:07:21 GMT
+Date: Thu, 23 Nov 2023 07:58:38 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 66
@@ -1367,7 +1374,7 @@ Content-Length: 66
 </div>
 </div>
 <div class="sect3">
-<h4 id="_요청_핸들러_찾을_수_없는_오류_response_fields"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_response_fields">4.4.3. Response fields</a></h4>
+<h4 id="_요청_핸들러_찾을_수_없는_오류_response_fields"><a class="link" href="#_요청_핸들러_찾을_수_없는_오류_response_fields">5.4.3. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1427,7 +1434,7 @@ Content-Length: 66
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-11-19 17:09:06 +0900
+Last updated 2023-11-23 16:29:13 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

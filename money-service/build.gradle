@@ -1,13 +1,13 @@
 buildscript {
     ext {
-        set('springframeworkBootPlugin', Versions.springframeworkBootPlugin)
-        set('springDependencyManagementPlugin', Versions.springDependencyManagementPlugin)
-        set('asciidoctorPlugin', Versions.asciidoctorPlugin)
+        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
+        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
+        set('asciidoctorPlugin', Versions.ASCIIDOCTOR_PLUGIN)
 
-        set('javaVersion', Versions.java)
-        set('guavaVersion', Versions.guava)
-        set('redissonVersion', Versions.redisson)
-        set('mapstructVersion', Versions.mapstruct)
+        set('javaVersion', Versions.JAVA)
+        set('guavaVersion', Versions.GUAVA)
+        set('redissonVersion', Versions.REDISSON)
+        set('mapstructVersion', Versions.MAPSTRUCT)
     }
 }
 

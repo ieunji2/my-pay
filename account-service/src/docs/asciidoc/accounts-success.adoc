@@ -1,15 +1,14 @@
-== 계정(Account)
+== 정상 응답(Success)
+계정 서비스 기능에 대한 정상 응답을 제공합니다.
 
-계정에 대한 기능을 제공합니다.
-
-=== 계정등록
+=== 계정 등록
 operation::account-api-test/register-account[snippets='http-request,http-response,request-fields,response-fields']
 
-=== 계정조회
+=== 계정 조회
 operation::account-api-test/find-account[snippets='http-request,http-response,path-parameters,response-fields']
 
-=== 계정수정
+=== 계정 수정
 operation::account-api-test/modify-account[snippets='http-request,http-response,path-parameters,request-fields,response-fields']
 
-=== 계정삭제
+=== 계정 삭제
 operation::account-api-test/remove-account[snippets='http-request,http-response,path-parameters,response-fields']

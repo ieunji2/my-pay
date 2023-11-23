@@ -14,7 +14,7 @@ spring:
         - id: money-service
           uri: http://localhost:10000/
           predicates:
-            - Path=/money/health/ping
+            - Path=/money/docs/index.html, /money/health/ping
             - Method=GET
           filters:
             - RewritePath=/money/?(?<segment>.*), /$\{segment}
