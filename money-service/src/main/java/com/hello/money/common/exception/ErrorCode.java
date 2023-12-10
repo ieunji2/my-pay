@@ -14,13 +14,13 @@ public enum ErrorCode {
   INVALID_ACCOUNT(400, "M007", "Invalid Account"),
   ;
 
-  private final int status;
-  private final String code;
-  private final String message;
+  private final int statusCode;
+  private final String errorCode;
+  private final String errorMessage;
 
-  ErrorCode(final int status, final String code, final String message) {
-    this.status = status;
-    this.code = code;
-    this.message = message;
+  ErrorCode(final int statusCode, final String errorCode, final String errorMessage) {
+    this.statusCode = statusCode;
+    this.errorCode = errorCode;
+    this.errorMessage = errorMessage;
   }
 }

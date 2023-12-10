@@ -172,9 +172,9 @@ class MoneyApiTest extends ApiTest {
             .extract();
 
     //then
-    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getStatus());
-    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getCode());
-    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getMessage());
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getStatusCode());
+    assertThat(response.jsonPath().getString("errorCode")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getErrorCode());
+    assertThat(response.jsonPath().getString("errorMessage")).isEqualTo(ErrorCode.WALLET_ALREADY_EXISTS.getErrorMessage());
   }
 
   @ParameterizedTest
@@ -196,9 +196,9 @@ class MoneyApiTest extends ApiTest {
             .extract();
 
     //then
-    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getStatus());
-    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getCode());
-    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getMessage());
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getStatusCode());
+    assertThat(response.jsonPath().getString("errorCode")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getErrorCode());
+    assertThat(response.jsonPath().getString("errorMessage")).isEqualTo(ErrorCode.WALLET_NOT_FOUND.getErrorMessage());
   }
 
   @ParameterizedTest
@@ -227,9 +227,9 @@ class MoneyApiTest extends ApiTest {
             .extract();
 
     //then
-    assertThat(response.statusCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
-    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getCode());
-    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatusCode());
+    assertThat(response.jsonPath().getString("errorCode")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
+    assertThat(response.jsonPath().getString("errorMessage")).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorMessage());
     assertThat(response.jsonPath().getList("errors")).hasSize(2);
   }
 
@@ -250,8 +250,8 @@ class MoneyApiTest extends ApiTest {
             .extract();
 
     //then
-    assertThat(response.statusCode()).isEqualTo(ErrorCode.NOT_FOUND.getStatus());
-    assertThat(response.jsonPath().getString("code")).isEqualTo(ErrorCode.NOT_FOUND.getCode());
-    assertThat(response.jsonPath().getString("message")).isEqualTo(ErrorCode.NOT_FOUND.getMessage());
+    assertThat(response.statusCode()).isEqualTo(ErrorCode.NOT_FOUND.getStatusCode());
+    assertThat(response.jsonPath().getString("errorCode")).isEqualTo(ErrorCode.NOT_FOUND.getErrorCode());
+    assertThat(response.jsonPath().getString("errorMessage")).isEqualTo(ErrorCode.NOT_FOUND.getErrorMessage());
   }
 }

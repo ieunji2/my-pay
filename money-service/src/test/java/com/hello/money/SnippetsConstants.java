@@ -28,9 +28,9 @@ public class SnippetsConstants {
           fieldWithPath("balance").description("아이디"));
 
   public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS_SNIPPET = responseFields(
-          fieldWithPath("status").description("상태 코드"),
-          fieldWithPath("code").description("오류 코드"),
-          fieldWithPath("message").description("오류 메세지"),
+          fieldWithPath("statusCode").description("상태 코드"),
+          fieldWithPath("errorCode").description("오류 코드"),
+          fieldWithPath("errorMessage").description("오류 메세지"),
           fieldWithPath("errors").description("입력값 유효성 검증 오류 목록")
                                  .type(ArrayList.class)
                                  .optional())

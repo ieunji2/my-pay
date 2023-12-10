@@ -505,7 +505,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:54060</code></pre>
+Host: localhost:52007</code></pre>
 </div>
 </div>
 </div>
@@ -516,7 +516,7 @@ Host: localhost:54060</code></pre>
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -598,7 +598,7 @@ Content-Length: 50
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
-Host: localhost:54060</code></pre>
+Host: localhost:52007</code></pre>
 </div>
 </div>
 </div>
@@ -609,7 +609,7 @@ Host: localhost:54060</code></pre>
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 50
@@ -692,7 +692,7 @@ Content-Length: 50
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:54060
+Host: localhost:52007
 Content-Length: 45
 
 {
@@ -709,7 +709,7 @@ Content-Length: 45
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -821,7 +821,7 @@ Content-Length: 53
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:54060
+Host: localhost:52007
 Content-Length: 71
 
 {
@@ -839,7 +839,7 @@ Content-Length: 71
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 Content-Length: 53
@@ -964,7 +964,7 @@ Content-Length: 53
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:54060</code></pre>
+Host: localhost:52007</code></pre>
 </div>
 </div>
 </div>
@@ -975,14 +975,14 @@ Host: localhost:54060</code></pre>
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Connection: close
-Content-Length: 78
+Content-Length: 92
 
 {
-  "status" : 400,
-  "code" : "M004",
-  "message" : "Wallet Already Exists"
+  "statusCode" : 400,
+  "errorCode" : "M004",
+  "errorMessage" : "Wallet Already Exists"
 }</code></pre>
 </div>
 </div>
@@ -1029,17 +1029,17 @@ Content-Length: 78
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상태 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorMessage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 메세지</p></td>
 </tr>
@@ -1076,7 +1076,7 @@ Content-Length: 78
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/money HTTP/1.1
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
-Host: localhost:54060</code></pre>
+Host: localhost:52007</code></pre>
 </div>
 </div>
 </div>
@@ -1087,14 +1087,14 @@ Host: localhost:54060</code></pre>
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Connection: close
-Content-Length: 73
+Content-Length: 87
 
 {
-  "status" : 400,
-  "code" : "M005",
-  "message" : "Wallet Not Found"
+  "statusCode" : 400,
+  "errorCode" : "M005",
+  "errorMessage" : "Wallet Not Found"
 }</code></pre>
 </div>
 </div>
@@ -1141,17 +1141,17 @@ Content-Length: 73
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상태 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorMessage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 메세지</p></td>
 </tr>
@@ -1189,7 +1189,7 @@ Content-Length: 73
 x-account-id: 1
 x-account-name: %EC%9D%B4%EB%A6%84
 Content-Type: application/json
-Host: localhost:54060
+Host: localhost:52007
 Content-Length: 71
 
 {
@@ -1207,14 +1207,14 @@ Content-Length: 71
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Connection: close
-Content-Length: 296
+Content-Length: 310
 
 {
-  "status" : 400,
-  "code" : "M003",
-  "message" : "Invalid Input Value",
+  "statusCode" : 400,
+  "errorCode" : "M003",
+  "errorMessage" : "Invalid Input Value",
   "errors" : [ {
     "field" : "amount",
     "value" : "0",
@@ -1304,17 +1304,17 @@ Content-Length: 296
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상태 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorMessage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 메세지</p></td>
 </tr>
@@ -1349,7 +1349,7 @@ Content-Length: 296
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /v1/test HTTP/1.1
-Host: localhost:54060</code></pre>
+Host: localhost:52007</code></pre>
 </div>
 </div>
 </div>
@@ -1360,15 +1360,15 @@ Host: localhost:54060</code></pre>
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 404 Not Found
 Content-Type: application/json
 Transfer-Encoding: chunked
-Date: Thu, 23 Nov 2023 07:58:38 GMT
+Date: Sun, 10 Dec 2023 10:42:47 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
-Content-Length: 66
+Content-Length: 80
 
 {
-  "status" : 404,
-  "code" : "M002",
-  "message" : "Not Found"
+  "statusCode" : 404,
+  "errorCode" : "M002",
+  "errorMessage" : "Not Found"
 }</code></pre>
 </div>
 </div>
@@ -1390,17 +1390,17 @@ Content-Length: 66
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">상태 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 코드</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorMessage</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">오류 메세지</p></td>
 </tr>
@@ -1434,7 +1434,7 @@ Content-Length: 66
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-11-23 16:29:13 +0900
+Last updated 2023-12-10 18:31:18 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
