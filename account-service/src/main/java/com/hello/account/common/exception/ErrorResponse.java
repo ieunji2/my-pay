@@ -9,24 +9,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record ErrorResponse(
-        int status,
-        String code,
-        String message,
+        int statusCode,
+        String errorCode,
+        String errorMessage,
         @JsonInclude(JsonInclude.Include.NON_EMPTY) List<ValidationError> errors) {
 
   private ErrorResponse(final ErrorCode errorCode) {
     this(
-            errorCode.getStatus(),
-            errorCode.getCode(),
-            errorCode.getMessage(),
+            errorCode.getStatusCode(),
+            errorCode.getErrorCode(),
+            errorCode.getErrorMessage(),
             new ArrayList<>());
   }
 
   private ErrorResponse(final ErrorCode errorCode, final List<ValidationError> errors) {
     this(
-            errorCode.getStatus(),
-            errorCode.getCode(),
-            errorCode.getMessage(),
+            errorCode.getStatusCode(),
+            errorCode.getErrorCode(),
+            errorCode.getErrorMessage(),
             errors);
   }
 
