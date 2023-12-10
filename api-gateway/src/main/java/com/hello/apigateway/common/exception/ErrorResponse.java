@@ -1,15 +1,15 @@
 package com.hello.apigateway.common.exception;
 
 public record ErrorResponse(
-        int status,
-        String code,
-        String message) {
+        int statusCode,
+        String errorCode,
+        String errorMessage) {
 
   private ErrorResponse(final ErrorCode errorCode) {
     this(
-            errorCode.getStatus(),
-            errorCode.getCode(),
-            errorCode.getMessage());
+            errorCode.getStatusCode(),
+            errorCode.getErrorCode(),
+            errorCode.getErrorMessage());
   }
 
   public static ErrorResponse of(final ErrorCode errorCode) {

@@ -40,7 +40,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
       error = objectMapper.writeValueAsString(errorResponse);
     } catch (JsonProcessingException e) {
       log.error("JsonProcessingException", e);
-      exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(errorResponse.status()));
+      exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(errorResponse.statusCode()));
       return exchange.getResponse().setComplete();
     }
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
   }
 
   private static ErrorResponse getErrorResponse(final ServerHttpResponse response, final ErrorCode errorCode) {
-    response.setStatusCode(HttpStatusCode.valueOf(errorCode.getStatus()));
+    response.setStatusCode(HttpStatusCode.valueOf(errorCode.getStatusCode()));
     return ErrorResponse.of(errorCode);
   }
 }
