@@ -1,6 +1,7 @@
 package com.hello.money.v1.service;
 
 import com.hello.money.domain.Wallet;
+import com.hello.money.v1.dto.AccountResponse;
 import com.hello.money.v1.dto.ChargeMoneyServiceDto;
 import com.hello.money.v1.dto.SendMoneyServiceDto;
 import com.hello.money.v1.repository.TransactionRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigInteger;
 import java.util.concurrent.CountDownLatch;
@@ -20,9 +22,13 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class MoneyServiceWithLockTest {
+
+  @MockBean
+  private ExchangeApi exchangeApi;
 
   @Autowired
   private MoneyService moneyService;
@@ -115,6 +121,9 @@ class MoneyServiceWithLockTest {
 
     final Wallet receiverWallet = walletPort.saveWallet(new Wallet(2L));
 
+    when(exchangeApi.getAccount(2L))
+            .thenReturn(new AccountResponse(2L, "이름2", "mypay@test.com", true));
+
     //when
     final ExecutorService executorService = Executors.newFixedThreadPool(32);
     final CountDownLatch latch = new CountDownLatch(threadCount);
@@ -159,6 +168,7 @@ class MoneyServiceWithLockTest {
           int balance2,
           int balance3) throws InterruptedException {
 
+    //given
     final Wallet wallet1 = walletPort.saveWallet(new Wallet(dto1.accountId()));
     wallet1.addMoney(BigInteger.valueOf(3000));
     walletPort.saveWallet(wallet1);
@@ -171,12 +181,19 @@ class MoneyServiceWithLockTest {
     wallet3.addMoney(BigInteger.valueOf(3000));
     walletPort.saveWallet(wallet3);
 
+    when(exchangeApi.getAccount(1L))
+            .thenReturn(new AccountResponse(1L, "이름1", "mypay@test.com", true));
+
+    when(exchangeApi.getAccount(2L))
+            .thenReturn(new AccountResponse(2L, "이름2", "mypay@test.com", true));
+
+    //when
     final ExecutorService executorService1 = Executors.newFixedThreadPool(16);
     final ExecutorService executorService2 = Executors.newFixedThreadPool(16);
     final ExecutorService executorService3 = Executors.newFixedThreadPool(16);
     final CountDownLatch latch = new CountDownLatch(threadCount);
 
-    for (int i = 0; i < threadCount/3; i++) {
+    for (int i = 0; i < threadCount / 3; i++) {
       executorService1.submit(() -> {
         try {
           //1->2
@@ -217,6 +234,7 @@ class MoneyServiceWithLockTest {
 
     latch.await();
 
+    //then
     final Wallet savedWallet1 = walletPort.findWalletByAccountId(dto1.accountId());
     System.out.println("savedWallet1.getBalance() = " + savedWallet1.getBalance());
 

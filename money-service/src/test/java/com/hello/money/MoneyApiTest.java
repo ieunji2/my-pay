@@ -1,14 +1,17 @@
 package com.hello.money;
 
 import com.hello.money.v1.dto.Account;
+import com.hello.money.v1.dto.AccountResponse;
 import com.hello.money.v1.dto.ChargeMoneyRequest;
 import com.hello.money.v1.dto.SendMoneyRequest;
+import com.hello.money.v1.service.ExchangeApi;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Snippet;
@@ -20,10 +23,14 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document;
 
 class MoneyApiTest extends ApiTest {
+
+  @MockBean
+  private ExchangeApi exchangeApi;
 
   private static Stream<Arguments> accountParam() {
     return Stream.of(
@@ -126,6 +133,9 @@ class MoneyApiTest extends ApiTest {
     //given
     chargeMoney(account, new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요"));
     createWallet(new Account(2L, "이름2"));
+
+    when(exchangeApi.getAccount(2L))
+            .thenReturn(new AccountResponse(2L, "이름2", "mypay@test.com", true));
 
     final Snippet[] snippets = {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
