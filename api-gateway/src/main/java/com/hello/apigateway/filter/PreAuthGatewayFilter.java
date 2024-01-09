@@ -2,6 +2,7 @@ package com.hello.apigateway.filter;
 
 import com.hello.apigateway.dto.ResponseAuth;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.*;
@@ -17,7 +18,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGatewayFilter.Config> {
 
-  private static final String AUTH_URL = "http://localhost:9000/v1/auths/check";
+  @Value("${app.auth-check-url}")
+  private String authCheckUrl;
 
   private final RestTemplate restTemplate;
 
@@ -78,7 +80,7 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
 
   private ResponseEntity<ResponseAuth> getExchange(final String token) {
     return restTemplate.exchange(
-            AUTH_URL,
+            authCheckUrl,
             HttpMethod.GET,
             getAuthHeaderEntity(token),
             ResponseAuth.class);
