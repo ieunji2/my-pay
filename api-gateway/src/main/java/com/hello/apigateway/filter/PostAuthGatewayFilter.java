@@ -19,7 +19,6 @@ public class PostAuthGatewayFilter extends AbstractGatewayFilterFactory<PostAuth
   public GatewayFilter apply(Config config) {
     return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
       final ServerHttpResponse response = exchange.getResponse();
-
       log.info("response code -> {}", response.getStatusCode());
     }));
   }

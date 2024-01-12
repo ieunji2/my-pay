@@ -10,7 +10,5 @@ public interface WalletPort {
 
   boolean existsWalletByAccountId(final Long accountId);
 
-  boolean existsWalletById(Long walletId);
-
   Wallet findWalletById(final Long walletId);
 }

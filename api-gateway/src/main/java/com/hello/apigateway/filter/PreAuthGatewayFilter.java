@@ -1,23 +1,32 @@
 package com.hello.apigateway.filter;
 
-import com.hello.apigateway.dto.ResponseAuth;
+import com.hello.apigateway.common.exception.CommunicationException;
+import com.hello.apigateway.common.exception.UnauthorizedException;
+import com.hello.apigateway.dto.AuthResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-@Component
 @Slf4j
+@Component
 public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGatewayFilter.Config> {
 
   private static final String AUTH_URL = "http://localhost:9000/v1/auths/check";
+  private static final String BEARER = "Bearer ";
+  private static final String X_ACCOUNT_ID = "x-account-id";
+  private static final String X_ACCOUNT_NAME = "x-account-name";
 
   private final RestTemplate restTemplate;
 
@@ -31,57 +40,43 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
 
     return (exchange, chain) -> {
       log.info("Request Id -> {}", exchange.getRequest().getId());
-
-      try {
-        final String token = getToken(exchange);
-        final ResponseAuth responseAuth = verifyToken(exchange, token);
-        rebuildRequestHeader(exchange, responseAuth);
-      } catch (Exception e) {
-        return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
-      }
-
+      final String token = getToken(exchange);
+      final AuthResponse authResponse = verifyToken(exchange, token);
+      final ServerHttpRequest request = rebuildRequestHeader(exchange, authResponse);
+      checkRequestHeader(request);
       return chain.filter(exchange);
     };
   }
 
-  private String getToken(final ServerWebExchange exchange) {
-
+  private static String getToken(final ServerWebExchange exchange) {
     final HttpHeaders headers = exchange.getRequest().getHeaders();
-
     if (!headers.containsKey(HttpHeaders.AUTHORIZATION)) {
-      throw new RuntimeException("No authorization header");
+      throw new UnauthorizedException("No authorization header");
     }
-
-    final String bearer = "Bearer ";
-    if (!headers.get(HttpHeaders.AUTHORIZATION).get(0).startsWith(bearer)) {
-      throw new RuntimeException("Not a valid token format");
+    if (!headers.get(HttpHeaders.AUTHORIZATION).get(0).startsWith(BEARER)) {
+      throw new UnauthorizedException("Not a valid token format");
     }
-
-    return headers.get(HttpHeaders.AUTHORIZATION).get(0).replace(bearer, "");
+    return headers.get(HttpHeaders.AUTHORIZATION).get(0).replace(BEARER, "");
   }
 
-  private ResponseAuth verifyToken(final ServerWebExchange exchange, final String token) {
-
-    final ResponseEntity<ResponseAuth> responseEntity = getExchange(token);
-
+  private AuthResponse verifyToken(final ServerWebExchange exchange, final String token) {
+    final ResponseEntity<AuthResponse> responseEntity = getExchange(token);
     if (responseEntity.getStatusCode().isError()) {
-      throw new RuntimeException("HTTP communication error");
+      throw new CommunicationException();
     }
-
-    final ResponseAuth responseAuth = responseEntity.getBody();
-    if (!responseAuth.isValid()) {
-      throw new RuntimeException("Authentication token invalid");
+    final AuthResponse authResponse = responseEntity.getBody();
+    if (!authResponse.isValid()) {
+      throw new UnauthorizedException("Authentication token invalid");
     }
-
-    return responseAuth;
+    return authResponse;
   }
 
-  private ResponseEntity<ResponseAuth> getExchange(final String token) {
+  private ResponseEntity<AuthResponse> getExchange(final String token) {
     return restTemplate.exchange(
             AUTH_URL,
             HttpMethod.GET,
             getAuthHeaderEntity(token),
-            ResponseAuth.class);
+            AuthResponse.class);
   }
 
   private HttpEntity<?> getAuthHeaderEntity(final String token) {
@@ -90,36 +85,36 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
     return new HttpEntity<>(headers);
   }
 
-  private void rebuildRequestHeader(final ServerWebExchange exchange, final ResponseAuth responseAuth) {
-    removeAuthorizationHeader(exchange);
-    setAuthenticatedUserHeader(exchange, responseAuth);
+  private static ServerHttpRequest rebuildRequestHeader(final ServerWebExchange exchange, final AuthResponse authResponse) {
+    final List<String> removedAuthorizationHeader = removeAuthorizationHeader(exchange);
+    if (removedAuthorizationHeader.isEmpty()) {
+      throw new UnauthorizedException("No authorization header");
+    }
+    return setAuthenticatedUserHeader(exchange, authResponse);
   }
 
-  private void removeAuthorizationHeader(final ServerWebExchange exchange) {
+  private static List<String> removeAuthorizationHeader(final ServerWebExchange exchange) {
     final HttpHeaders headers = HttpHeaders.writableHttpHeaders(exchange.getRequest().getHeaders());
-    headers.remove(HttpHeaders.AUTHORIZATION);
+    return headers.remove(HttpHeaders.AUTHORIZATION);
   }
 
-  private void setAuthenticatedUserHeader(final ServerWebExchange exchange, final ResponseAuth responseAuth) {
-    exchange.getRequest()
-            .mutate()
-            .header("x-account-id", encode(String.valueOf(responseAuth.id())))
-            .header("x-account-name", encode(responseAuth.name()))
-            .build();
+  private static ServerHttpRequest setAuthenticatedUserHeader(final ServerWebExchange exchange, final AuthResponse authResponse) {
+    return exchange.getRequest()
+                   .mutate()
+                   .header(X_ACCOUNT_ID, encode(String.valueOf(authResponse.id())))
+                   .header(X_ACCOUNT_NAME, encode(authResponse.name()))
+                   .build();
   }
 
-  private String encode(String value) {
+  private static String encode(String value) {
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 
-  private Mono<Void> onError(final ServerWebExchange exchange, final String errorMessage, final HttpStatus httpStatus) {
-    log.error("Error -> {}, {}", httpStatus, errorMessage);
-    return getErrorResponse(exchange, httpStatus);
-  }
-
-  private Mono<Void> getErrorResponse(final ServerWebExchange exchange, final HttpStatus httpStatus) {
-    exchange.getResponse().setStatusCode(httpStatus);
-    return exchange.getResponse().setComplete();
+  private static boolean checkRequestHeader(final ServerHttpRequest request) {
+    if (!request.getHeaders().containsKey(X_ACCOUNT_ID) || !request.getHeaders().containsKey(X_ACCOUNT_NAME)) {
+      throw new UnauthorizedException();
+    }
+    return true;
   }
 
   public static class Config {

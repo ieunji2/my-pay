@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/moneys")
+@RequestMapping("/v1/money")
 public class MoneyController {
 
   private final MoneyService moneyService;

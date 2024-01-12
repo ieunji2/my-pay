@@ -1,5 +1,6 @@
 package com.hello.account.v1.repository;
 
+import com.hello.account.common.exception.AccountNotFoundException;
 import com.hello.account.domain.Account;
 import com.hello.account.v1.service.AccountPort;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ class AccountAdapter implements AccountPort {
   @Override
   public Account findAccountById(final Long accountId) {
     return accountRepository.findById(accountId)
-                            .orElseThrow(() -> new IllegalArgumentException("계정이 존재하지 않습니다."));
+                            .orElseThrow(AccountNotFoundException::new);
   }
 
   @Override
