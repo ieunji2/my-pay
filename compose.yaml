@@ -38,14 +38,14 @@ services:
 
       SPRING_CLOUD_GATEWAY_ROUTES_1_ID: money-service
       SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://money-service:8080
-      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/moneys/health/ping
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/money/docs/index.html, /money/health/ping
       SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_1: Method=GET
-      SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: RewritePath=/moneys/?(?<segment>.*), /$\{segment}
+      SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: RewritePath=/money/?(?<segment>.*), /$\{segment}
 
       SPRING_CLOUD_GATEWAY_ROUTES_2_ID: money-service
       SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://money-service:8080
-      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/moneys/**
-      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_0: RewritePath=/moneys/?(?<segment>.*), /$\{segment}
+      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/money/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_0: RewritePath=/money/?(?<segment>.*), /$\{segment}
       SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_1: PreAuthGatewayFilter
       SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_2: PostAuthGatewayFilter
 

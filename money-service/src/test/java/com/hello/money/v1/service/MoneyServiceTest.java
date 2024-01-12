@@ -1,5 +1,7 @@
 package com.hello.money.v1.service;
 
+import com.hello.money.common.exception.WalletAlreadyExistsException;
+import com.hello.money.common.exception.WalletNotFoundException;
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.dto.*;
 import com.hello.money.v1.repository.TransactionRepository;
@@ -106,7 +108,7 @@ public class MoneyServiceTest {
     //when, then
     assertThatThrownBy(() -> {
       moneyService.createWallet(dto);
-    }).isInstanceOf(IllegalArgumentException.class);
+    }).isInstanceOf(WalletAlreadyExistsException.class);
   }
 
   @ParameterizedTest
@@ -131,7 +133,7 @@ public class MoneyServiceTest {
     //given, when, then
     assertThatThrownBy(() -> {
       moneyService.getWallet(dto);
-    }).isInstanceOf(IllegalArgumentException.class);
+    }).isInstanceOf(WalletNotFoundException.class);
   }
 
   @ParameterizedTest

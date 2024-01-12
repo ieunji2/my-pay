@@ -1,7 +1,9 @@
 buildscript {
     ext {
-        set('springframeworkBootPlugin', Versions.springframeworkBootPlugin)
-        set('springDependencyManagementPlugin', Versions.springDependencyManagementPlugin)
+        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
+        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
+
+        set('javaVersion', Versions.JAVA)
     }
 }
 
@@ -15,7 +17,7 @@ group = 'com.hello.apigateway'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = "${javaVersion}"
 }
 
 configurations {

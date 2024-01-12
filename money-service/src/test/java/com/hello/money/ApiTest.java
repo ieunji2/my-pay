@@ -12,8 +12,13 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.snippet.Snippet;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration;
 
 @Import(RestDocsConfig.class)
@@ -47,5 +52,17 @@ public abstract class ApiTest {
                             .withRequestDefaults(prettyPrint())
                             .withResponseDefaults(prettyPrint()))
             .build();
+  }
+
+  RequestSpecification getFilter(Snippet... snippets) {
+    return RestAssured.given(spec).log().all()
+                      .filter(
+                              document(
+                                      SnippetsConstants.IDENTIFIER,
+                                      snippets));
+  }
+
+  String encode(String value) {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 }

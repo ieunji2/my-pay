@@ -21,18 +21,21 @@ class PreAuthGatewayFilterTest {
 
   @ParameterizedTest
   @MethodSource("headerValues")
-  @DisplayName("헤더 변경은 잘 된다")
+  @DisplayName("요청 헤더를 변경한다")
   void mutateHttpRequestHeader(final Long id, final String name) {
     //given
+    final String testPath = "/testPath";
+
     final MockServerWebExchange exchange = MockServerWebExchange.from(
             MockServerHttpRequest
-                    .get("/path")
+                    .get(testPath)
                     .build());
 
     assertThat(exchange.getRequest().getHeaders()).isEmpty();
 
     //when
-    exchange.getRequest().mutate()
+    exchange.getRequest()
+            .mutate()
             .header("x-account-id", String.valueOf(id))
             .header("x-account-name", name)
             .build();
