@@ -4,6 +4,7 @@ import com.hello.apigateway.common.exception.CommunicationException;
 import com.hello.apigateway.common.exception.UnauthorizedException;
 import com.hello.apigateway.dto.AuthResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpEntity;
@@ -23,10 +24,12 @@ import java.util.List;
 @Component
 public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGatewayFilter.Config> {
 
-  private static final String AUTH_URL = "http://localhost:9000/v1/auths/check";
   private static final String BEARER = "Bearer ";
   private static final String X_ACCOUNT_ID = "x-account-id";
   private static final String X_ACCOUNT_NAME = "x-account-name";
+
+  @Value("${app.auth-check-url}")
+  private String authCheckUrl;
 
   private final RestTemplate restTemplate;
 
@@ -73,7 +76,7 @@ public class PreAuthGatewayFilter extends AbstractGatewayFilterFactory<PreAuthGa
 
   private ResponseEntity<AuthResponse> getExchange(final String token) {
     return restTemplate.exchange(
-            AUTH_URL,
+            authCheckUrl,
             HttpMethod.GET,
             getAuthHeaderEntity(token),
             AuthResponse.class);

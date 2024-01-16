@@ -1,0 +1,92 @@
+services:
+  mysql:
+    image: mysql
+    networks:
+      - mypay-network
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    image: redis
+    networks:
+      - mypay-network
+    ports:
+      - 6379:6379
+
+  api-gateway:
+    build: ./api-gateway
+    networks:
+      - mypay-network
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: account-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://account-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/accounts/**
+      SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: RewritePath=/accounts/?(?<segment>.*), /$\{segment}
+
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: money-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://money-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/money/docs/index.html, /money/health/ping
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_1: Method=GET
+      SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: RewritePath=/money/?(?<segment>.*), /$\{segment}
+
+      SPRING_CLOUD_GATEWAY_ROUTES_2_ID: money-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://money-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/money/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_0: RewritePath=/money/?(?<segment>.*), /$\{segment}
+      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_1: PreAuthGatewayFilter
+      SPRING_CLOUD_GATEWAY_ROUTES_2_FILTERS_2: PostAuthGatewayFilter
+
+      APP_AUTH_CHECK_URL: http://account-service:8080/v1/auths/check
+
+  account-service:
+    build: ./account-service
+    networks:
+      - mypay-network
+    ports:
+      - 9000:8080
+    depends_on:
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/mypay_account
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: P@ssw0rd
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+
+  money-service:
+    build: ./money-service
+    networks:
+      - mypay-network
+    ports:
+      - 10000:8080
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/mypay_money
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: P@ssw0rd
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_REDIS_DATA_HOST: redis
+      SPRING_REDIS_DATA_PORT: 6379
+
+      APP_ACCOUNT_SERVICE_URL: http://account-service:8080
+
+networks:
+  mypay-network:
+    driver:
+      bridge

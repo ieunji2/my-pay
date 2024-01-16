@@ -3,10 +3,7 @@ package com.hello.money.v1.service;
 import com.hello.money.common.exception.WalletAlreadyExistsException;
 import com.hello.money.common.exception.WalletNotFoundException;
 import com.hello.money.domain.Wallet;
-import com.hello.money.v1.dto.ChargeMoneyServiceDto;
-import com.hello.money.v1.dto.CreateWalletServiceDto;
-import com.hello.money.v1.dto.GetWalletServiceDto;
-import com.hello.money.v1.dto.SendMoneyServiceDto;
+import com.hello.money.v1.dto.*;
 import com.hello.money.v1.repository.TransactionRepository;
 import com.hello.money.v1.repository.WalletRepository;
 import jakarta.validation.ConstraintViolationException;
@@ -17,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
@@ -25,9 +23,13 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class MoneyServiceTest {
+
+  @MockBean
+  private ExchangeApi exchangeApi;
 
   @Autowired
   private MoneyService moneyService;
@@ -221,6 +223,9 @@ public class MoneyServiceTest {
     moneyService.chargeMoney(new ChargeMoneyServiceDto(dto.accountId(), dto.accountName(), BigInteger.valueOf(3000), "적요"));
 
     final Wallet receiverWallet = moneyService.createWallet(new CreateWalletServiceDto(2L, "이름2"));
+
+    when(exchangeApi.getAccount(2L))
+            .thenReturn(new AccountResponse(2L, "이름2", "mypay@test.com", true));
 
     //when
     final Wallet senderWallet = moneyService.sendMoney(new SendMoneyServiceDto(

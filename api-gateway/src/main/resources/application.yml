@@ -2,6 +2,15 @@ spring:
   application:
     name: api-gateway
 
+  profiles:
+    active: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
   cloud:
     gateway:
       routes:
@@ -26,3 +35,15 @@ spring:
             - RewritePath=/money/?(?<segment>.*), /$\{segment}
             - PreAuthGatewayFilter
             - PostAuthGatewayFilter
+
+app:
+  auth-check-url: http://localhost:9000/v1/auths/check
+
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: development
