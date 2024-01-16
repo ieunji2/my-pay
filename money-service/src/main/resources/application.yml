@@ -22,6 +22,12 @@ logging.level:
   org.hibernate.orm.jdbc.bind: trace
   org.hibernate.orm.jdbc.extract: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
 ---
 spring:
   config:
