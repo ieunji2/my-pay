@@ -3,11 +3,11 @@ services:
     image: mysql
     networks:
       - mypay-network
+    ports:
+      - 3306:3306
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d
-    ports:
-      - 3306:3306
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -33,12 +33,12 @@ services:
       SPRING_PROFILES_ACTIVE: development
       SPRING_CLOUD_GATEWAY_ROUTES_0_ID: account-service
       SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://account-service:8080
-      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/accounts/**
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/accounts/**, /accounts/actuator/**
       SPRING_CLOUD_GATEWAY_ROUTES_0_FILTERS_0: RewritePath=/accounts/?(?<segment>.*), /$\{segment}
 
       SPRING_CLOUD_GATEWAY_ROUTES_1_ID: money-service
       SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://money-service:8080
-      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/money/docs/index.html, /money/health/ping
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/money/docs/index.html, /money/health/ping, /money/actuator/**
       SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_1: Method=GET
       SPRING_CLOUD_GATEWAY_ROUTES_1_FILTERS_0: RewritePath=/money/?(?<segment>.*), /$\{segment}
 
@@ -85,6 +85,25 @@ services:
       SPRING_REDIS_DATA_PORT: 6379
 
       APP_ACCOUNT_SERVICE_URL: http://account-service:8080
+
+  prometheus:
+    image: prom/prometheus
+    networks:
+      - mypay-network
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    networks:
+      - mypay-network
+    ports:
+      - 3000:3000
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped
 
 networks:
   mypay-network:
