@@ -41,3 +41,6 @@ out/
 
 ### Docker Volumes ###
 mysql/data/
+
+### locust ###
+locust/__pycache__/
