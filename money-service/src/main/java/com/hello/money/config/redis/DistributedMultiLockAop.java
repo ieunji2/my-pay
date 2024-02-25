@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 @Aspect
 @Component
@@ -46,28 +46,9 @@ public class DistributedMultiLockAop {
   }
 
   private RLock[] getLocks(final DistributedMultiLock distributedLock, final MethodSignature signature, final ProceedingJoinPoint joinPoint) {
-    RLock[] locks = {};
-    final String[] keys = getKeys(distributedLock, signature, joinPoint);
-    for (String key : keys) {
-      locks = appendElement(locks, redissonClient.getLock(key));
-    }
-    return locks;
-  }
-
-  private String[] getKeys(final DistributedMultiLock distributedLock, final MethodSignature signature, final ProceedingJoinPoint joinPoint) {
-    String[] keys = {};
-    for (String key : distributedLock.keys()) {
-      keys = appendElement(keys, REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(
-              signature.getParameterNames(),
-              joinPoint.getArgs(),
-              key));
-    }
-    return keys;
-  }
-
-  private <T> T[] appendElement(T[] originArray, T element) {
-    final T[] newArray = Arrays.copyOf(originArray, originArray.length + 1);
-    newArray[originArray.length] = element;
-    return newArray;
+    return Stream.of(distributedLock.keys())
+                 .map(key -> REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), key))
+                 .map(redissonClient::getLock)
+                 .toArray(RLock[]::new);
   }
 }
