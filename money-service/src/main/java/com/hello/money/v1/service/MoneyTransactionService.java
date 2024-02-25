@@ -29,7 +29,6 @@ public class MoneyTransactionService {
 
     walletPort.saveWallet(senderWallet);
     senderTransaction.success();
-
     walletPort.saveWallet(receiverWallet);
     receiverTransaction.success();
 
@@ -45,13 +44,20 @@ public class MoneyTransactionService {
     return getTransactionStatus(transactionPort.saveTransaction(transaction));
   }
 
+  @Transactional
+  public TransactionStatus saveFailedTransaction(final Transaction senderTransaction, final Transaction receiverTransaction) {
+    senderTransaction.fail();
+    receiverTransaction.fail();
+    getTransactionStatus(transactionPort.saveTransaction(senderTransaction));
+    getTransactionStatus(transactionPort.saveTransaction(receiverTransaction));
+    return TransactionStatus.ERROR;
+  }
+
   private static TransactionStatus getTransactionStatus(final Transaction transaction) {
     return transaction.getTransactionStatus();
   }
 
-  private static boolean isSuccessTransaction(
-          final TransactionStatus senderTransactionStatus,
-          final TransactionStatus receiverTransactionStatus) {
+  private static boolean isSuccessTransaction(final TransactionStatus senderTransactionStatus, final TransactionStatus receiverTransactionStatus) {
     return TransactionStatus.NORMAL.equals(senderTransactionStatus)
             && TransactionStatus.NORMAL.equals(receiverTransactionStatus);
   }

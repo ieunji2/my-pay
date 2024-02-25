@@ -22,17 +22,17 @@ def ping(self):
 
 
 class BTasks(SequentialTaskSet):
-    @task
-    def charge_money(self):
-        response = self.client.post("/money/v1/money/charge",
-                                    json={"amount": 2000, "summary": "locust UserB"})
-        print("UserB ::: charge_money ::: response ::: ", response.text)
-
     # @task
-    # def send_money(self):
-    #     response = self.client.post("/money/v1/money/send",
-    #                                 json={"receiverWalletId": 2, "amount": 200, "summary": "lucky"})
-    #     print("UserB ::: send_money ::: response ::: ", response.text)
+    # def charge_money(self):
+    #     response = self.client.post("/money/v1/money/charge",
+    #                                 json={"amount": 2000, "summary": "locust UserB"})
+    #     print("UserB ::: charge_money ::: response ::: ", response.text)
+
+    @task
+    def send_money(self):
+        response = self.client.post("/money/v1/money/send",
+                                    json={"receiverWalletId": 2, "amount": 200, "summary": "lucky"})
+        print("UserB ::: send_money ::: response ::: ", response.text)
 
 
 class UserB(HttpUser):
@@ -60,15 +60,15 @@ class CTasks(SequentialTaskSet):
         print("UserC ::: send_money ::: response ::: ", response.text)
 
 
-# class UserC(HttpUser):
-#     host = "http://localhost:8080"
-#     # wait_time = between(1, 3)
-#     wait_time = constant(5)
-#
-#     tasks = [CTasks]
-#
-#     def on_start(self):
-#         self.client.headers = {"Authorization": "Bearer 456"}
+class UserC(HttpUser):
+    host = "http://localhost:8080"
+    wait_time = between(1, 5)
+    # wait_time = constant(5)
+
+    tasks = [CTasks]
+
+    def on_start(self):
+        self.client.headers = {"Authorization": "Bearer 456"}
 
 
 # class UserD(HttpUser):

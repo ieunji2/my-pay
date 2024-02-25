@@ -25,8 +25,10 @@ public class AuthController {
       return new AuthResponse(1L, "이름", true);
     } else if ("456".equals(accessToken)) {
       return new AuthResponse(2L, "이름2", true);
+    } else if ("789".equals(accessToken)) {
+      return new AuthResponse(3L, "이름3", true);
     } else {
-      return new AuthResponse(3L, "이름3", false);
+      return new AuthResponse(4L, "이름3", false);
     }
   }
 }

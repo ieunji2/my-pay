@@ -52,8 +52,8 @@ public class MoneyDistributedLockService {
 
   @DistributedMultiLock(keys = {"#walletId", "#dto.receiverWalletId()"})
   public Wallet sendMoneyWithLock(final SendMoneyServiceDto dto, final Long walletId) {
-
     final Wallet senderWallet = getSenderWallet(dto);
+    log.info("{}:{} - 송금 시작", Thread.currentThread().getId(), senderWallet.getBalance());
     senderWallet.subtractMoney(dto.amount());
     final Transaction senderTransaction = getSavedTransaction(senderWallet, dto);
 
@@ -63,9 +63,9 @@ public class MoneyDistributedLockService {
 
     try {
       transactionService.executeSend(senderWallet, senderTransaction, receiverWallet, receiverTransaction);
+      log.info("{}:{} - 송금 완료", Thread.currentThread().getId(), senderWallet.getBalance());
     } catch (Exception e) {
-      transactionService.saveFailedTransaction(senderTransaction);
-      transactionService.saveFailedTransaction(receiverTransaction);
+      transactionService.saveFailedTransaction(senderTransaction, receiverTransaction);
       throw new SendTransactionFailedException();
     }
     return walletPort.findWalletById(walletId);
