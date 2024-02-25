@@ -38,7 +38,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   datasource:
     url: jdbc:mysql://localhost:3306/mypay_account
@@ -47,6 +47,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 20
+      connection-timeout: 30000
+      leak-detection-threshold: 2000
 
 server:
   port: 9000
@@ -59,4 +61,4 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none

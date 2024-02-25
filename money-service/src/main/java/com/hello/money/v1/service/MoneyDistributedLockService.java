@@ -12,8 +12,10 @@ import com.hello.money.v1.dto.AccountResponse;
 import com.hello.money.v1.dto.ChargeMoneyServiceDto;
 import com.hello.money.v1.dto.SendMoneyServiceDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MoneyDistributedLockService {
@@ -26,10 +28,12 @@ public class MoneyDistributedLockService {
   @DistributedLock(key = "#walletId")
   public Wallet chargeMoneyWithLock(final ChargeMoneyServiceDto dto, final Long walletId) {
     final Wallet wallet = walletPort.findWalletByAccountId(dto.accountId());
+    log.info("{}:{} - 충전 시작", Thread.currentThread().getId(), wallet.getBalance());
     wallet.addMoney(dto.amount());
     final Transaction transaction = getSavedTransaction(wallet, dto);
     try {
       transactionService.executeCharge(wallet, transaction);
+      log.info("{}:{} - 충전 완료", Thread.currentThread().getId(), wallet.getBalance());
     } catch (Exception e) {
       transactionService.saveFailedTransaction(transaction);
       throw new ChargeTransactionFailedException();

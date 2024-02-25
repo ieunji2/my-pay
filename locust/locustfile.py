@@ -1,4 +1,4 @@
-from locust import HttpUser, task, between, SequentialTaskSet
+from locust import HttpUser, task, between, SequentialTaskSet, constant
 
 
 def ping(self):
@@ -25,20 +25,20 @@ class BTasks(SequentialTaskSet):
     @task
     def charge_money(self):
         response = self.client.post("/money/v1/money/charge",
-                                    json={"amount": 1000, "summary": "locust UserB"})
+                                    json={"amount": 2000, "summary": "locust UserB"})
         print("UserB ::: charge_money ::: response ::: ", response.text)
 
-    @task
-    def send_money(self):
-        response = self.client.post("/money/v1/money/send",
-                                    json={"receiverWalletId": 2, "amount": 200, "summary": "lucky"})
-        print("UserB ::: send_money ::: response ::: ", response.text)
+    # @task
+    # def send_money(self):
+    #     response = self.client.post("/money/v1/money/send",
+    #                                 json={"receiverWalletId": 2, "amount": 200, "summary": "lucky"})
+    #     print("UserB ::: send_money ::: response ::: ", response.text)
 
 
 class UserB(HttpUser):
     host = "http://localhost:8080"
     wait_time = between(1, 5)
-    hasWallet = False
+    # wait_time = constant(5)
 
     tasks = [BTasks]
 
@@ -47,11 +47,11 @@ class UserB(HttpUser):
 
 
 class CTasks(SequentialTaskSet):
-    @task
-    def charge_money(self):
-        response = self.client.post("/money/v1/money/charge",
-                                    json={"amount": 2000, "summary": "locust UserC"})
-        print("UserC ::: charge_money ::: response ::: ", response.text)
+    # @task
+    # def charge_money(self):
+    #     response = self.client.post("/money/v1/money/charge",
+    #                                 json={"amount": 2000, "summary": "locust UserC"})
+    #     print("UserC ::: charge_money ::: response ::: ", response.text)
 
     @task
     def send_money(self):
@@ -60,11 +60,27 @@ class CTasks(SequentialTaskSet):
         print("UserC ::: send_money ::: response ::: ", response.text)
 
 
-class UserC(HttpUser):
-    host = "http://localhost:8080"
-    wait_time = between(1, 5)
+# class UserC(HttpUser):
+#     host = "http://localhost:8080"
+#     # wait_time = between(1, 3)
+#     wait_time = constant(5)
+#
+#     tasks = [CTasks]
+#
+#     def on_start(self):
+#         self.client.headers = {"Authorization": "Bearer 456"}
 
-    tasks = [CTasks]
 
-    def on_start(self):
-        self.client.headers = {"Authorization": "Bearer 456"}
+# class UserD(HttpUser):
+#     host = "http://localhost:8080"
+#     # wait_time = between(1, 3)
+#     wait_time = constant(5)
+#
+#     @task
+#     def send_money(self):
+#         response = self.client.post("/money/v1/money/send",
+#                                     json={"receiverWalletId": 1, "amount": 100, "summary": "hello"})
+#         print("UserD ::: send_money ::: response ::: ", response.text)
+#
+#     def on_start(self):
+#         self.client.headers = {"Authorization": "Bearer 789"}
