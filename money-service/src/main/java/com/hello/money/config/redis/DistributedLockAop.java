@@ -24,6 +24,7 @@ public class DistributedLockAop {
   private static final String REDISSON_LOCK_PREFIX = "LOCK:";
 
   private final RedissonClient redissonClient;
+  private final AopForTransaction aopForTransaction;
 
   @Around("@annotation(com.hello.money.config.redis.DistributedLock)")
   public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -47,7 +48,7 @@ public class DistributedLockAop {
         throw new RedisLockAcquisitionFailedException("Failed to acquire lock");
       }
       log.info("{}:{} - 3. lock 획득 성공", Thread.currentThread().getId(), lock.getName());
-      return joinPoint.proceed();
+      return aopForTransaction.proceed(joinPoint);
     } finally {
       if (lock.isLocked() && lock.isHeldByCurrentThread()) {
         lock.unlock();

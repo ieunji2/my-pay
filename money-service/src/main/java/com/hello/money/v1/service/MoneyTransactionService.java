@@ -14,7 +14,6 @@ public class MoneyTransactionService {
   private final WalletPort walletPort;
   private final TransactionPort transactionPort;
 
-  @Transactional
   public TransactionStatus executeCharge(final Wallet wallet, final Transaction transaction) {
     walletPort.saveWallet(wallet);
     transaction.success();
@@ -41,7 +40,6 @@ public class MoneyTransactionService {
             : TransactionStatus.ERROR;
   }
 
-  @Transactional
   public TransactionStatus saveFailedTransaction(final Transaction transaction) {
     transaction.fail();
     return getTransactionStatus(transactionPort.saveTransaction(transaction));
