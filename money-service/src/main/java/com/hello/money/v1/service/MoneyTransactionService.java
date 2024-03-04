@@ -3,6 +3,8 @@ package com.hello.money.v1.service;
 import com.hello.money.domain.Transaction;
 import com.hello.money.domain.TransactionStatus;
 import com.hello.money.domain.Wallet;
+import com.hello.money.v1.dto.ChargeMoneyServiceDto;
+import com.hello.money.v1.dto.SendMoneyServiceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,51 +16,56 @@ public class MoneyTransactionService {
   private final WalletPort walletPort;
   private final TransactionPort transactionPort;
 
-  public TransactionStatus executeCharge(final Wallet wallet, final Transaction transaction) {
-    walletPort.saveWallet(wallet);
-    transaction.success();
-    return getTransactionStatus(transactionPort.saveTransaction(transaction));
+  public Transaction getSavedTransaction(final Wallet wallet, final ChargeMoneyServiceDto dto) {
+    return transactionPort.saveTransaction(
+            new Transaction(
+                    wallet,
+                    wallet.getId(),
+                    dto.amount(),
+                    dto.summary()));
+  }
+
+  public Transaction getSavedTransaction(final Wallet wallet, final SendMoneyServiceDto dto) {
+    return transactionPort.saveTransaction(
+            new Transaction(
+                    wallet,
+                    dto.receiverWalletId(),
+                    dto.amount(),
+                    dto.summary()));
   }
 
   @Transactional
-  public TransactionStatus executeSend(
+  public Wallet executeCharge(final Wallet wallet, final Transaction transaction) {
+    final Wallet savedWallet = walletPort.saveWallet(wallet);
+    transactionPort.saveTransaction(transaction.success());
+    return savedWallet;
+  }
+
+  @Transactional
+  public Wallet executeSend(
           final Wallet senderWallet,
           final Transaction senderTransaction,
           final Wallet receiverWallet,
           final Transaction receiverTransaction) {
 
-    walletPort.saveWallet(senderWallet);
-    senderTransaction.success();
-    walletPort.saveWallet(receiverWallet);
-    receiverTransaction.success();
+    final Wallet savedWallet = walletPort.saveWallet(senderWallet);
+    transactionPort.saveTransaction(senderTransaction.success());
 
-    return isSuccessTransaction(
-            getTransactionStatus(transactionPort.saveTransaction(senderTransaction)),
-            getTransactionStatus(transactionPort.saveTransaction(receiverTransaction)))
-            ? TransactionStatus.NORMAL
-            : TransactionStatus.ERROR;
+    walletPort.saveWallet(receiverWallet);
+    transactionPort.saveTransaction(receiverTransaction.success());
+
+    return savedWallet;
   }
 
   public TransactionStatus saveFailedTransaction(final Transaction transaction) {
-    transaction.fail();
-    return getTransactionStatus(transactionPort.saveTransaction(transaction));
+    return transactionPort.saveTransaction(transaction.fail())
+                          .getTransactionStatus();
   }
 
   @Transactional
   public TransactionStatus saveFailedTransaction(final Transaction senderTransaction, final Transaction receiverTransaction) {
-    senderTransaction.fail();
-    receiverTransaction.fail();
-    getTransactionStatus(transactionPort.saveTransaction(senderTransaction));
-    getTransactionStatus(transactionPort.saveTransaction(receiverTransaction));
+    transactionPort.saveTransaction(senderTransaction.fail());
+    transactionPort.saveTransaction(receiverTransaction.fail());
     return TransactionStatus.ERROR;
-  }
-
-  private static TransactionStatus getTransactionStatus(final Transaction transaction) {
-    return transaction.getTransactionStatus();
-  }
-
-  private static boolean isSuccessTransaction(final TransactionStatus senderTransactionStatus, final TransactionStatus receiverTransactionStatus) {
-    return TransactionStatus.NORMAL.equals(senderTransactionStatus)
-            && TransactionStatus.NORMAL.equals(receiverTransactionStatus);
   }
 }

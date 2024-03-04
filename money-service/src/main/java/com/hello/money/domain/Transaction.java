@@ -49,11 +49,13 @@ public class Transaction extends BaseEntity {
     this.transactionStatus = TransactionStatus.REQUEST;
   }
 
-  public void success() {
+  public Transaction success() {
     this.transactionStatus = TransactionStatus.NORMAL;
+    return this;
   }
 
-  public void fail() {
+  public Transaction fail() {
     this.transactionStatus = TransactionStatus.ERROR;
+    return this;
   }
 }

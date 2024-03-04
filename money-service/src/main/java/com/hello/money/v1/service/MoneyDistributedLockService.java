@@ -22,7 +22,6 @@ public class MoneyDistributedLockService {
 
   private final MoneyTransactionService transactionService;
   private final WalletPort walletPort;
-  private final TransactionPort transactionPort;
   private final ExchangeApi exchangeApi;
 
   @DistributedLock(key = "#walletId")
@@ -30,24 +29,16 @@ public class MoneyDistributedLockService {
     final Wallet wallet = walletPort.findWalletByAccountId(dto.accountId());
     log.info("{}:{} - 충전 시작", Thread.currentThread().getId(), wallet.getBalance());
     wallet.addMoney(dto.amount());
-    final Transaction transaction = getSavedTransaction(wallet, dto);
+    final Transaction transaction = transactionService.getSavedTransaction(wallet, dto);
     try {
-      transactionService.executeCharge(wallet, transaction);
-      log.info("{}:{} - 충전 완료", Thread.currentThread().getId(), wallet.getBalance());
+      final Wallet savedWallet = transactionService.executeCharge(wallet, transaction);
+      log.info("{}:{} - 충전 완료", Thread.currentThread().getId(), savedWallet.getBalance());
+      return savedWallet;
+//      return transactionService.executeCharge(wallet, transaction);
     } catch (Exception e) {
       transactionService.saveFailedTransaction(transaction);
       throw new ChargeTransactionFailedException();
     }
-    return walletPort.findWalletById(walletId);
-  }
-
-  private Transaction getSavedTransaction(final Wallet wallet, final ChargeMoneyServiceDto dto) {
-    return transactionPort.saveTransaction(
-            new Transaction(
-                    wallet,
-                    wallet.getId(),
-                    dto.amount(),
-                    dto.summary()));
   }
 
   @DistributedMultiLock(keys = {"#walletId", "#dto.receiverWalletId()"})
@@ -55,20 +46,21 @@ public class MoneyDistributedLockService {
     final Wallet senderWallet = getSenderWallet(dto);
     log.info("{}:{} - 송금 시작", Thread.currentThread().getId(), senderWallet.getBalance());
     senderWallet.subtractMoney(dto.amount());
-    final Transaction senderTransaction = getSavedTransaction(senderWallet, dto);
+    final Transaction senderTransaction = transactionService.getSavedTransaction(senderWallet, dto);
 
     final Wallet receiverWallet = getReceiverWallet(dto);
     receiverWallet.addMoney(dto.amount());
-    final Transaction receiverTransaction = getSavedTransaction(receiverWallet, dto);
+    final Transaction receiverTransaction = transactionService.getSavedTransaction(receiverWallet, dto);
 
     try {
-      transactionService.executeSend(senderWallet, senderTransaction, receiverWallet, receiverTransaction);
-      log.info("{}:{} - 송금 완료", Thread.currentThread().getId(), senderWallet.getBalance());
+      final Wallet savedWallet = transactionService.executeSend(senderWallet, senderTransaction, receiverWallet, receiverTransaction);
+      log.info("{}:{} - 송금 완료", Thread.currentThread().getId(), savedWallet.getBalance());
+      return savedWallet;
+//      return transactionService.executeSend(senderWallet, senderTransaction, receiverWallet, receiverTransaction);
     } catch (Exception e) {
       transactionService.saveFailedTransaction(senderTransaction, receiverTransaction);
       throw new SendTransactionFailedException();
     }
-    return walletPort.findWalletById(walletId);
   }
 
   private Wallet getSenderWallet(final SendMoneyServiceDto dto) {
@@ -90,14 +82,5 @@ public class MoneyDistributedLockService {
 
   private AccountResponse getReceiver(final Long accountId) {
     return exchangeApi.getAccount(accountId);
-  }
-
-  private Transaction getSavedTransaction(final Wallet wallet, final SendMoneyServiceDto dto) {
-    return transactionPort.saveTransaction(
-            new Transaction(
-                    wallet,
-                    dto.receiverWalletId(),
-                    dto.amount(),
-                    dto.summary()));
   }
 }
