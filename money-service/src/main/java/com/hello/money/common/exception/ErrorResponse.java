@@ -53,7 +53,7 @@ public record ErrorResponse(
               .stream()
               .map(fieldError -> new ValidationError(
                       fieldError.getField(),
-                      (String) fieldError.getRejectedValue(),
+                      String.valueOf(fieldError.getRejectedValue()),
                       fieldError.getDefaultMessage()
               ))
               .collect(Collectors.toList());
