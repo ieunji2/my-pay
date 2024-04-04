@@ -17,10 +17,17 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true
 
+  output:
+    ansi:
+      enabled: always
+
 logging.level:
-  org.hibernate.SQL: debug
-  org.hibernate.orm.jdbc.bind: trace
-  org.hibernate.orm.jdbc.extract: trace
+  #org.springframework.transaction.interceptor: trace
+  #org.hibernate.SQL: debug
+  #org.hibernate.orm.jdbc.bind: trace
+  #org.hibernate.orm.jdbc.extract: trace
+  com.zaxxer.hikari.HikariConfig: debug
+  com.zaxxer.hikari: trace
 
 management:
   endpoints:
@@ -36,13 +43,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   datasource:
     url: jdbc:mysql://localhost:3306/mypay_money
     username: myuser
     password: P@ssw0rd
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      #leak-detection-threshold: 2000
 
   redis:
     data:
@@ -63,4 +74,4 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none

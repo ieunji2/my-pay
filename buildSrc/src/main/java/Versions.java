@@ -6,6 +6,6 @@ public class Versions {
   public final static String JAVA = "17";
 
   public final static String GUAVA = "31.1-jre";
-  public final static String REDISSON = "3.24.3";
+  public final static String REDISSON = "3.26.0";
   public final static String MAPSTRUCT = "1.5.5.Final";
 }
