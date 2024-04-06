@@ -46,20 +46,17 @@ public abstract class ApiTest {
     databaseCleanup.execute();
 
     this.spec = new RequestSpecBuilder()
-            .addFilter(
-                    documentationConfiguration(this.restDocumentation)
-                            .operationPreprocessors()
-                            .withRequestDefaults(prettyPrint())
-                            .withResponseDefaults(prettyPrint()))
+            .addFilter(documentationConfiguration(this.restDocumentation)
+                               .operationPreprocessors()
+                               .withRequestDefaults(prettyPrint())
+                               .withResponseDefaults(prettyPrint()))
             .build();
   }
 
   RequestSpecification getFilter(Snippet... snippets) {
-    return RestAssured.given(spec).log().all()
-                      .filter(
-                              document(
-                                      SnippetsConstants.IDENTIFIER,
-                                      snippets));
+    return RestAssured
+            .given(spec).log().all()
+            .filter(document(SnippetsConstants.IDENTIFIER, snippets));
   }
 
   String encode(String value) {

@@ -28,8 +28,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.76.Final:osx-aarch_64'
+
+    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

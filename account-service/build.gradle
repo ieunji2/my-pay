@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.springframework.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.asciidoctor)
+    id 'jacoco'
 }
 
 group = 'com.hello.account'
@@ -10,6 +11,10 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = "${libs.versions.java.get()}"
+}
+
+jacoco {
+    toolVersion = "${libs.versions.jacoco.get()}"
 }
 
 configurations {
@@ -52,6 +57,7 @@ ext {
 test {
     useJUnitPlatform()
     outputs.dir snippetsDir
+    finalizedBy jacocoTestReport
 }
 
 asciidoctor {
@@ -75,5 +81,50 @@ bootJar {
     dependsOn createDocument
     from ("${asciidoctor.outputDir}") {
         into 'static/docs'
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application*',
+                            '**/*Exception*',
+                            '**/health/**',
+                            '**/dto/**',
+                    ])
+                })
+        )
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    '*.*Application',
+                    '*.*Exception',
+                    '*.health.*',
+                    '*.dto.*',
+            ]
+        }
     }
 }
