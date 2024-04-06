@@ -44,3 +44,6 @@ mysql/data/
 
 ### locust ###
 locust/__pycache__/
+
+### asciidoc ###
+**/src/main/resources/static/docs/

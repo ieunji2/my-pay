@@ -1,23 +1,14 @@
-buildscript {
-    ext {
-        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
-        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
-
-        set('javaVersion', Versions.JAVA)
-    }
-}
-
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "$springframeworkBootPlugin"
-    id 'io.spring.dependency-management' version "$springDependencyManagementPlugin"
+    alias(libs.plugins.springframework.boot)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 group = 'com.hello.apigateway'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = "${javaVersion}"
+    sourceCompatibility = "${libs.versions.java.get()}"
 }
 
 configurations {
@@ -28,10 +19,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('springCloudVersion', "2022.0.4")
 }
 
 dependencies {
@@ -50,7 +37,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${libs.versions.springCloud.get()}"
     }
 }
 
