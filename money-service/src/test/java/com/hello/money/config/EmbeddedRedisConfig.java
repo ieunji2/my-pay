@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 
 
 @TestConfiguration
-public class RedisConfig {
+public class EmbeddedRedisConfig {
 
   @Value("${spring.redis.data.port}")
   private int redisPort;
