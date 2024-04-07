@@ -1,3 +1,7 @@
+[![Java CI with Gradle](https://github.com/ieunji2/my-pay/actions/workflows/gradle.yml/badge.svg)](https://github.com/ieunji2/my-pay/actions/workflows/gradle.yml)
+[![codecov](https://codecov.io/gh/ieunji2/my-pay/graph/badge.svg?token=QL7YHEOHRB)](https://codecov.io/gh/ieunji2/my-pay)
+![Codecov](https://img.shields.io/codecov/c/github/ieunji2/my-pay)
+
 # my-pay
 MSA로 설계한 송금 서비스로 REST API를 제공합니다.
 
