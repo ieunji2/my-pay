@@ -2,7 +2,7 @@ package com.hello.money.v1.service;
 
 import com.hello.money.common.exception.WalletAlreadyExistsException;
 import com.hello.money.common.exception.WalletNotFoundException;
-import com.hello.money.config.RedisConfig;
+import com.hello.money.config.EmbeddedRedisConfig;
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.dto.*;
 import com.hello.money.v1.repository.TransactionRepository;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = RedisConfig.class)
+@SpringBootTest(classes = EmbeddedRedisConfig.class)
 public class MoneyServiceTest {
 
   @MockBean

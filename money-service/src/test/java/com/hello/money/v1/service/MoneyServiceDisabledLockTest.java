@@ -1,7 +1,7 @@
 package com.hello.money.v1.service;
 
 import com.hello.money.config.DisabledDistributedLock;
-import com.hello.money.config.RedisConfig;
+import com.hello.money.config.EmbeddedRedisConfig;
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.dto.AccountResponse;
 import com.hello.money.v1.dto.ChargeMoneyServiceDto;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 
 @DisabledDistributedLock
-@SpringBootTest(classes = RedisConfig.class)
+@SpringBootTest(classes = EmbeddedRedisConfig.class)
 class MoneyServiceDisabledLockTest {
 
   @MockBean
