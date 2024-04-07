@@ -23,9 +23,9 @@ spring:
 
 logging.level:
   #org.springframework.transaction.interceptor: trace
-  #org.hibernate.SQL: debug
-  #org.hibernate.orm.jdbc.bind: trace
-  #org.hibernate.orm.jdbc.extract: trace
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+  org.hibernate.orm.jdbc.extract: trace
   com.zaxxer.hikari.HikariConfig: debug
   com.zaxxer.hikari: trace
 

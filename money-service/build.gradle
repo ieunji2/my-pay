@@ -1,28 +1,20 @@
-buildscript {
-    ext {
-        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
-        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
-        set('asciidoctorPlugin', Versions.ASCIIDOCTOR_PLUGIN)
-
-        set('javaVersion', Versions.JAVA)
-        set('guavaVersion', Versions.GUAVA)
-        set('redissonVersion', Versions.REDISSON)
-        set('mapstructVersion', Versions.MAPSTRUCT)
-    }
-}
-
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "${springframeworkBootPlugin}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementPlugin}"
-    id "org.asciidoctor.jvm.convert" version "${asciidoctorPlugin}"
+    alias(libs.plugins.springframework.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.asciidoctor)
+    id 'jacoco'
 }
 
 group = 'com.hello.money'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = "${javaVersion}"
+    sourceCompatibility = "${libs.versions.java.get()}"
+}
+
+jacoco {
+    toolVersion = "${libs.versions.jacoco.get()}"
 }
 
 configurations {
@@ -43,19 +35,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
+    implementation "com.google.guava:guava:${libs.versions.guava.get()}"
+    implementation "org.redisson:redisson-spring-boot-starter:${libs.versions.redisson.get()}"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.76.Final:osx-aarch_64'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    implementation "org.mapstruct:mapstruct:${libs.versions.mapstruct.get()}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${libs.versions.mapstruct.get()}"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${libs.versions.mapstruct.get()}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured'
@@ -63,6 +57,8 @@ dependencies {
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
+
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.2'
 }
 
 ext {
@@ -72,6 +68,7 @@ ext {
 test {
     useJUnitPlatform()
     outputs.dir snippetsDir
+    finalizedBy jacocoTestReport
 }
 
 asciidoctor {
@@ -95,5 +92,49 @@ bootJar {
     dependsOn createDocument
     from("${asciidoctor.outputDir}") {
         into 'static/docs'
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application*',
+                            '**/*Exception*',
+                            '**/health/**',
+                            '**/dto/**',
+                    ])
+                })
+        )
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    '*.*Application',
+                    '*.*Exception',
+                    '*.health.*',
+                    '*.dto.*',
+            ]
+        }
     }
 }

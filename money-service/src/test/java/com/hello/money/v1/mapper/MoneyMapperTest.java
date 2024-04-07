@@ -1,5 +1,6 @@
 package com.hello.money.v1.mapper;
 
+import com.hello.money.config.EmbeddedRedisConfig;
 import com.hello.money.domain.Wallet;
 import com.hello.money.v1.controller.mapper.MoneyMapper;
 import com.hello.money.v1.dto.*;
@@ -13,7 +14,7 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = EmbeddedRedisConfig.class)
 class MoneyMapperTest {
 
   @Autowired

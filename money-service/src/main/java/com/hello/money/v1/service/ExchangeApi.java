@@ -7,5 +7,5 @@ import org.springframework.web.service.annotation.GetExchange;
 public interface ExchangeApi {
 
   @GetExchange("/v1/accounts/{accountId}")
-  AccountResponse getAccount(@PathVariable Long accountId);
+  AccountResponse getAccount(@PathVariable("accountId") Long accountId);
 }
