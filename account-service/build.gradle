@@ -1,26 +1,20 @@
-buildscript {
-    ext {
-        set('springframeworkBootPlugin', Versions.SPRINGFRAMEWORK_BOOT_PLUGIN)
-        set('springDependencyManagementPlugin', Versions.SPRING_DEPENDENCY_MANAGEMENT_PLUGIN)
-        set('asciidoctorPlugin', Versions.ASCIIDOCTOR_PLUGIN)
-
-        set('javaVersion', Versions.JAVA)
-        set('guavaVersion', Versions.GUAVA)
-    }
-}
-
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "$springframeworkBootPlugin"
-    id 'io.spring.dependency-management' version "$springDependencyManagementPlugin"
-    id "org.asciidoctor.jvm.convert" version "$asciidoctorPlugin"
+    alias(libs.plugins.springframework.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.asciidoctor)
+    id 'jacoco'
 }
 
 group = 'com.hello.account'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = "${javaVersion}"
+    sourceCompatibility = "${libs.versions.java.get()}"
+}
+
+jacoco {
+    toolVersion = "${libs.versions.jacoco.get()}"
 }
 
 configurations {
@@ -40,7 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.google.guava:guava:${libs.versions.guava.get()}"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -63,6 +57,7 @@ ext {
 test {
     useJUnitPlatform()
     outputs.dir snippetsDir
+    finalizedBy jacocoTestReport
 }
 
 asciidoctor {
@@ -86,5 +81,50 @@ bootJar {
     dependsOn createDocument
     from ("${asciidoctor.outputDir}") {
         into 'static/docs'
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application*',
+                            '**/*Exception*',
+                            '**/health/**',
+                            '**/dto/**',
+                    ])
+                })
+        )
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    '*.*Application',
+                    '*.*Exception',
+                    '*.health.*',
+                    '*.dto.*',
+            ]
+        }
     }
 }
