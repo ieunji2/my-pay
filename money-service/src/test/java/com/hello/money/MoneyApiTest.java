@@ -9,7 +9,6 @@ import com.hello.money.v1.service.ExchangeApi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -17,40 +16,18 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.math.BigInteger;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
-class MoneyApiTest extends ApiTest {
+public class MoneyApiTest extends ApiTest {
 
   @MockBean
   private ExchangeApi exchangeApi;
 
-  private static Stream<Arguments> accountParam() {
-    return Stream.of(
-            arguments(new Account(1L, "이름")));
-  }
-
-  private static Stream<Arguments> chargeMoneyRequestParam() {
-    return Stream.of(
-            arguments(new Account(1L, "이름"), new ChargeMoneyRequest(BigInteger.valueOf(3000), "적요")));
-  }
-
-  private static Stream<Arguments> sendMoneyRequestParam() {
-    return Stream.of(
-            arguments(new Account(1L, "이름"), new SendMoneyRequest(2L, BigInteger.valueOf(2000), "적요")));
-  }
-
-  private static Stream<Arguments> sendMoneyRequestInvalidInputValueParam() {
-    return Stream.of(
-            arguments(new Account(1L, "이름"), new SendMoneyRequest(null, BigInteger.ZERO, "적요")));
-  }
-
   @ParameterizedTest
-  @MethodSource("accountParam")
+  @MethodSource("com.hello.money.ParameterFactory#accountParam")
   @DisplayName("인증된 계정의 아이디로 지갑을 생성한다")
   void createWallet(final Account account) {
     //given, when
@@ -58,9 +35,9 @@ class MoneyApiTest extends ApiTest {
             SnippetsConstants.REQUEST_HEADERS_SNIPPET,
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("x-account-id", encode(String.valueOf(account.id())))
+            .header("x-account-id", (String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
             .when()
             .post("/v1/money")
@@ -74,7 +51,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
+  @MethodSource("com.hello.money.ParameterFactory#accountParam")
   @DisplayName("인증된 계정의 아이디로 지갑을 조회한다")
   void getWallet(final Account account) {
     //given
@@ -85,7 +62,7 @@ class MoneyApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .header("x-account-id", encode(String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
             .when()
@@ -100,7 +77,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("chargeMoneyRequestParam")
+  @MethodSource("com.hello.money.ParameterFactory#chargeMoneyRequestParam")
   @DisplayName("인증된 계정의 아이디로 지갑의 잔액을 충전한다")
   void chargeMoney(final Account account, final ChargeMoneyRequest request) {
     //given
@@ -112,7 +89,7 @@ class MoneyApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .header("x-account-id", encode(String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
@@ -129,7 +106,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("sendMoneyRequestParam")
+  @MethodSource("com.hello.money.ParameterFactory#sendMoneyRequestParam")
   @DisplayName("인증된 계정의 아이디로 금액을 송금한다")
   void sendMoney(final Account account, final SendMoneyRequest request) {
     //given
@@ -146,7 +123,7 @@ class MoneyApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .header("x-account-id", encode(String.valueOf(account.id())))
             .header("x-account-name", encode(account.name()))
@@ -162,7 +139,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
+  @MethodSource("com.hello.money.ParameterFactory#accountParam")
   @DisplayName("지갑이 이미 존재하는 경우 지갑 생성 시 오류 응답을 반환한다")
   void checkWalletAlreadyExistsExceptionErrorResponse(final Account account) {
     //given, when
@@ -188,7 +165,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("accountParam")
+  @MethodSource("com.hello.money.ParameterFactory#accountParam")
   @DisplayName("지갑 조회 시 없으면 오류 응답을 반환한다")
   void checkWalletNotFoundExceptionErrorResponse(final Account account) {
     //given
@@ -212,7 +189,7 @@ class MoneyApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("sendMoneyRequestInvalidInputValueParam")
+  @MethodSource("com.hello.money.ParameterFactory#sendMoneyRequestInvalidInputValueParam")
   @DisplayName("유효하지 않은 값으로 금액 송금 시 오류 응답을 반환한다")
   void checkConstraintViolationExceptionErrorResponse(final Account account, final SendMoneyRequest request) {
     //given

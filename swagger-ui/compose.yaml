@@ -1,0 +1,14 @@
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8000:8080
+    volumes:
+      - ./api-spec:/usr/share/nginx/html/docs
+    restart: on-failure
+    environment:
+      - URLS=
+        [
+          {url:'docs/money.yaml',name:'money-service'},
+          {url:'docs/account.yaml',name:'account-service'}
+        ]

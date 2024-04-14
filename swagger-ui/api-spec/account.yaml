@@ -1,0 +1,187 @@
+openapi: 3.0.1
+info:
+  title: My Pay Application Document
+  description: Account Service API 문서입니다.
+  version: 0.1.0
+servers:
+- url: http://localhost:9000
+tags: []
+paths:
+  /v1/accounts:
+    post:
+      tags:
+      - v1
+      operationId: account-api-test/register-account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1-accounts52861772'
+            examples:
+              account-api-test/register-account:
+                value: |-
+                  {
+                    "name" : "이름",
+                    "email" : "mypay@test.com"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-accounts-accountId1339319981'
+              examples:
+                account-api-test/register-account:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "이름",
+                      "email" : "mypay@test.com",
+                      "isValid" : true
+                    }
+  /v1/accounts/{accountId}:
+    get:
+      tags:
+      - v1
+      operationId: account-api-test/find-account
+      parameters:
+      - name: accountId
+        in: path
+        description: 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-accounts-accountId1339319981'
+              examples:
+                account-api-test/find-account:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "이름",
+                      "email" : "mypay@test.com",
+                      "isValid" : true
+                    }
+    put:
+      tags:
+      - v1
+      operationId: account-api-test/modify-account
+      parameters:
+      - name: accountId
+        in: path
+        description: 아이디
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1-accounts-accountId1369723811'
+            examples:
+              account-api-test/modify-account:
+                value: |-
+                  {
+                    "name" : "이름 수정",
+                    "email" : "yourpay@test.com",
+                    "isValid" : false
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-accounts-accountId1339319981'
+              examples:
+                account-api-test/modify-account:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "이름 수정",
+                      "email" : "yourpay@test.com",
+                      "isValid" : false
+                    }
+    delete:
+      tags:
+      - v1
+      operationId: account-api-test/remove-account
+      parameters:
+      - name: accountId
+        in: path
+        description: 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-accounts-accountId1339319981'
+              examples:
+                account-api-test/remove-account:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "이름",
+                      "email" : "mypay@test.com",
+                      "isValid" : true
+                    }
+components:
+  schemas:
+    v1-accounts-accountId1369723811:
+      required:
+      - email
+      - name
+      type: object
+      properties:
+        isValid:
+          type: boolean
+          description: 계정 상태
+          nullable: true
+        name:
+          type: string
+          description: 이름
+        email:
+          type: string
+          description: 이메일
+    v1-accounts-accountId1339319981:
+      required:
+      - email
+      - id
+      - isValid
+      - name
+      type: object
+      properties:
+        isValid:
+          type: boolean
+          description: 계정 상태
+        name:
+          type: string
+          description: 이름
+        id:
+          type: number
+          description: 아이디
+        email:
+          type: string
+          description: 이메일
+    v1-accounts52861772:
+      required:
+      - email
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 이름
+        email:
+          type: string
+          description: 이메일
