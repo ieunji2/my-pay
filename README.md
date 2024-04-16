@@ -128,7 +128,6 @@ docker-compose down -v
 ```
 
 ## API 문서
-[Spring REST Docs](https://spring.io/projects/spring-restdocs)로 만든 API 문서입니다.
+[Spring REST Docs](https://spring.io/projects/spring-restdocs) + [OpenAPI Specification](https://swagger.io/specification/) + [Swagger UI](https://swagger.io/tools/swagger-ui/)로 만든 API 문서입니다.
 
-- 계정 서비스: [http://localhost:8080/accounts/docs/index.html](http://localhost:8080/accounts/docs/index.html)
-- 머니 서비스: [http://localhost:8080/money/docs/index.html](http://localhost:8080/money/docs/index.html)
+- [http://localhost:8000](http://localhost:8000)

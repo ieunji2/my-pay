@@ -3,6 +3,7 @@ package com.hello.money.config.auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -23,5 +24,13 @@ public class WebConfig implements WebMvcConfigurer {
   public void addResourceHandlers(final ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/docs/**")
             .addResourceLocations("classpath:/static/docs/");
+  }
+
+  @Override
+  public void addCorsMappings(final CorsRegistry registry) {
+    registry.addMapping("/**")
+            .allowedOrigins("http://localhost:8000")
+            .allowedMethods("*")
+            .allowedHeaders("*");
   }
 }

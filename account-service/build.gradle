@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.springframework.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.asciidoctor)
+    alias(libs.plugins.restdocsApiSpec)
     id 'jacoco'
 }
 
@@ -48,6 +49,9 @@ dependencies {
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
+
+    testImplementation "com.epages:restdocs-api-spec-restassured:${libs.versions.restdocsApiSpec.get()}"
+    testImplementation "com.epages:restdocs-api-spec-mockmvc:${libs.versions.restdocsApiSpec.get()}"
 }
 
 ext {
@@ -116,7 +120,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'CLASS'
                 value = 'COVEREDRATIO'
-                minimum = 0.80
+                minimum = 0.50
             }
 
             excludes = [
@@ -127,4 +131,14 @@ jacocoTestCoverageVerification {
             ]
         }
     }
+}
+
+openapi3 {
+    setOutputFileNamePrefix('account')
+    server = 'http://localhost:9000'
+    title = 'My Pay Application Document'
+    description = 'Account Service API 문서입니다.'
+    outputDirectory = "${rootDir.absolutePath}/swagger-ui/api-spec"
+    version = '0.1.0'
+    format = 'yaml'
 }

@@ -25,7 +25,7 @@ public class SnippetsConstants {
   public static final ResponseFieldsSnippet SUCCESS_RESPONSE_FIELDS_SNIPPET = responseFields(
           fieldWithPath("id").description("지갑 아이디"),
           fieldWithPath("accountId").description("계정 아이디"),
-          fieldWithPath("balance").description("아이디"));
+          fieldWithPath("balance").description("잔액"));
 
   public static final ResponseFieldsSnippet ERROR_RESPONSE_FIELDS_SNIPPET = responseFields(
           fieldWithPath("statusCode").description("상태 코드"),

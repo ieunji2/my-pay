@@ -105,6 +105,22 @@ services:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     restart: unless-stopped
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    networks:
+      - mypay-network
+    ports:
+      - 8000:8080
+    volumes:
+      - ./swagger-ui/api-spec:/usr/share/nginx/html/docs
+    restart: on-failure
+    environment:
+      - URLS=
+        [
+          {url:'docs/money.yaml',name:'money-service'},
+          {url:'docs/account.yaml',name:'account-service'}
+        ]
+
 networks:
   mypay-network:
     driver:

@@ -2,7 +2,8 @@ plugins {
     id 'java'
     alias(libs.plugins.springframework.boot)
     alias(libs.plugins.spring.dependency.management)
-    alias(libs.plugins.asciidoctor)
+    alias(libs.plugins.asciidoctor) //(1)Asciidoctor 플러그인 적용
+    alias(libs.plugins.restdocsApiSpec) //(1)restdocs-api-spec 플러그인 적용
     id 'jacoco'
 }
 
@@ -21,7 +22,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    asciidoctorExt
+    asciidoctorExt //(2)Asciidoctor를 확장하는 종속성에 대해 asciidoctorExt 구성을 선언
 }
 
 repositories {
@@ -55,40 +56,43 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'io.projectreactor:reactor-test'
 
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor' //(3)asciidoctorExt 구성에 spring-restdocs-asciidoctor 의존성 추가(.adoc 파일에서 사용할 스니펫 속성이 build/generated-snippets를 가리키도록 자동으로 구성됩니다.)
+    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured' //(4)REST Assured를 사용하기 위한 의존성 추가
+
+    testImplementation "com.epages:restdocs-api-spec-restassured:${libs.versions.restdocsApiSpec.get()}" //(2)restdocs-api-spec-restassured 의존성 추가
+    testImplementation "com.epages:restdocs-api-spec-mockmvc:${libs.versions.restdocsApiSpec.get()}" //(3)restdocs-api-spec-mockmvc 의존성 함께 추가(restdocs-api-spec-restassured 의존성 만으로는 RestDocumentationWrapper 클래스를 사용할 수 없다.)
 
     testImplementation 'com.github.codemonstur:embedded-redis:1.4.2'
 }
 
 ext {
-    snippetsDir = file('build/generated-snippets')
+    snippetsDir = file('build/generated-snippets') //(5)생성된 스니펫의 출력 위치를 정의하는 속성 설정
 }
 
 test {
     useJUnitPlatform()
-    outputs.dir snippetsDir
+    outputs.dir snippetsDir //(6)snippetsDir에 스니펫 생성
     finalizedBy jacocoTestReport
 }
 
-asciidoctor {
-    inputs.dir snippetsDir
-    configurations 'asciidoctorExt'
-    baseDirFollowsSourceFile()
-    dependsOn test
+asciidoctor { //(7)asciidoctor task 설정
+    inputs.dir snippetsDir //(8)snippetsDir에서 스니펫을 읽어옴
+    configurations 'asciidoctorExt' //(9)asciidoctorExt 구성을 사용
+    dependsOn test //(10)test task가 먼저 실행되고 문서 생성됨
+    baseDirFollowsSourceFile() //(11)소스 파일이 있는 디렉토리를 기본 디렉토리로 사용
 }
 
-asciidoctor.doFirst {
+asciidoctor.doFirst { //(12)asciidoctor task 실행 전에 이전에 생성된 문서를 제거
     delete file('src/main/resources/static/docs')
 }
 
-tasks.register('createDocument', Copy) {
+tasks.register('createDocument', Copy) { //(13)build/docs/asciidoc에 생성된 html 문서를 정적 리소스 디렉토리에 추가
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
 }
 
-bootJar {
+bootJar { //(14)생성된 문서를 static/docs 디렉토리에 복사하여 jar 생성
     dependsOn createDocument
     from("${asciidoctor.outputDir}") {
         into 'static/docs'
@@ -137,4 +141,14 @@ jacocoTestCoverageVerification {
             ]
         }
     }
+}
+
+openapi3 { //(4)openapi3 플러그인 설정
+    setOutputFileNamePrefix('money') //(5)생성될 문서 파일 이름 prefix 설정
+    server = 'http://localhost:10000' //(6)문서에 포함될 서버의 기본 URL 설정
+    title = 'My Pay Application Document' //(7)문서 제목 설정
+    description = 'Money Service API 문서입니다.' //(8)문서 설명 설정
+    outputDirectory = "${rootDir.absolutePath}/swagger-ui/api-spec" //(9)생성된 문서가 저장될 디렉토리 설정
+    version = '0.1.0' //(10) 문서 버전 설정
+    format = 'yaml' //(11) 생성될 문서 포맷 설정
 }

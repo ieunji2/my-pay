@@ -7,17 +7,13 @@ import com.hello.account.v1.repository.AccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.snippet.Snippet;
 
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
 public class AccountApiTest extends ApiTest {
@@ -25,29 +21,8 @@ public class AccountApiTest extends ApiTest {
   @Autowired
   private AccountRepository accountRepository;
 
-  private static Stream<Arguments> registerAccountRequestParam() {
-    return Stream.of(
-            arguments(
-                    1L,
-                    new RegisterAccountRequest("이름", "mypay@test.com")));
-  }
-
-  private static Stream<Arguments> modifyAccountRequestParam() {
-    return Stream.of(
-            arguments(
-                    1L,
-                    new RegisterAccountRequest("이름", "mypay@test.com"),
-                    new ModifyAccountRequest("이름 수정", "yourpay@test.com", false)));
-  }
-
-  private static Stream<Arguments> registerAccountRequestInvalidInputValueParam() {
-    return Stream.of(
-            arguments(
-                    new RegisterAccountRequest(" ", "이메일?")));
-  }
-
   @ParameterizedTest
-  @MethodSource("registerAccountRequestParam")
+  @MethodSource("com.hello.account.ParameterFactory#registerAccountRequestParam")
   @DisplayName("계정을 등록한다")
   void registerAccount(final Long accountId, final RegisterAccountRequest request) {
     //given
@@ -56,7 +31,7 @@ public class AccountApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
@@ -70,7 +45,7 @@ public class AccountApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("registerAccountRequestParam")
+  @MethodSource("com.hello.account.ParameterFactory#registerAccountRequestParam")
   @DisplayName("아이디로 계정을 조회한다")
   void findAccount(final Long accountId, final RegisterAccountRequest request) {
     //given
@@ -81,7 +56,7 @@ public class AccountApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .when()
             .get("/v1/accounts/{accountId}", accountId)
             .then().log().all()
@@ -93,7 +68,7 @@ public class AccountApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("modifyAccountRequestParam")
+  @MethodSource("com.hello.account.ParameterFactory#modifyAccountRequestParam")
   @DisplayName("계정을 수정한다")
   void modifyAccount(
           final Long accountId,
@@ -109,7 +84,7 @@ public class AccountApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(modifyRequest)
             .when()
@@ -123,7 +98,7 @@ public class AccountApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("registerAccountRequestParam")
+  @MethodSource("com.hello.account.ParameterFactory#registerAccountRequestParam")
   @DisplayName("계정을 삭제한다")
   void removeAccount(final Long accountId, final RegisterAccountRequest request) {
     //given
@@ -134,7 +109,7 @@ public class AccountApiTest extends ApiTest {
             SnippetsConstants.SUCCESS_RESPONSE_FIELDS_SNIPPET};
 
     //when
-    final var response = getFilter(snippets)
+    final var response = getWrapperFilter(snippets)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .delete("/v1/accounts/{accountId}", accountId)
@@ -170,7 +145,7 @@ public class AccountApiTest extends ApiTest {
   }
 
   @ParameterizedTest
-  @MethodSource("registerAccountRequestInvalidInputValueParam")
+  @MethodSource("com.hello.account.ParameterFactory#registerAccountRequestInvalidInputValueParam")
   @DisplayName("유효하지 않은 값으로 계정 등록 시 오류 응답을 반환한다")
   void checkMethodArgumentNotValidException(final RegisterAccountRequest request) {
     //given

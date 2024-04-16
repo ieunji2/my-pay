@@ -1,0 +1,233 @@
+openapi: 3.0.1
+info:
+  title: My Pay Application Document
+  description: Money Service API 문서입니다.
+  version: 0.1.0
+servers:
+- url: http://localhost:10000
+tags: []
+paths:
+  /v1/money:
+    get:
+      tags:
+      - v1
+      operationId: money-api-test/get-wallet
+      parameters:
+      - name: x-account-id
+        in: header
+        description: 아이디
+        required: true
+        schema:
+          type: string
+        example: "1"
+      - name: x-account-name
+        in: header
+        description: 이름
+        required: true
+        schema:
+          type: string
+        example: '%EC%9D%B4%EB%A6%84'
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-money-charge1572558542'
+              examples:
+                money-api-test/get-wallet:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "accountId" : 1,
+                      "balance" : 0
+                    }
+    post:
+      tags:
+      - v1
+      operationId: money-api-test/c
+      parameters:
+      - name: x-account-id
+        in: header
+        description: 아이디
+        required: true
+        schema:
+          type: string
+        example: "2"
+      - name: x-account-name
+        in: header
+        description: 이름
+        required: true
+        schema:
+          type: string
+        example: '%EC%9D%B4%EB%A6%842'
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-money-charge1572558542'
+              examples:
+                money-api-test/check-constraint-violation-exception-error-response:
+                  value: |-
+                    {
+                      "id" : 2,
+                      "accountId" : 2,
+                      "balance" : 0
+                    }
+                money-api-test/check-wallet-already-exists-exception-error-response:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "accountId" : 1,
+                      "balance" : 0
+                    }
+                money-api-test/create-wallet:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "accountId" : 1,
+                      "balance" : 0
+                    }
+  /v1/money/charge:
+    post:
+      tags:
+      - v1
+      operationId: money-api-test/charge-money
+      parameters:
+      - name: x-account-id
+        in: header
+        description: 아이디
+        required: true
+        schema:
+          type: string
+        example: "1"
+      - name: x-account-name
+        in: header
+        description: 이름
+        required: true
+        schema:
+          type: string
+        example: '%EC%9D%B4%EB%A6%84'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1-money-charge-404147378'
+            examples:
+              money-api-test/charge-money:
+                value: |-
+                  {
+                    "amount" : 3000,
+                    "summary" : "적요"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-money-charge1572558542'
+              examples:
+                money-api-test/charge-money:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "accountId" : 1,
+                      "balance" : 3000
+                    }
+  /v1/money/send:
+    post:
+      tags:
+      - v1
+      operationId: money-api-test/send-money
+      parameters:
+      - name: x-account-id
+        in: header
+        description: 아이디
+        required: true
+        schema:
+          type: string
+        example: "1"
+      - name: x-account-name
+        in: header
+        description: 이름
+        required: true
+        schema:
+          type: string
+        example: '%EC%9D%B4%EB%A6%84'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1-money-send-339234514'
+            examples:
+              money-api-test/send-money:
+                value: |-
+                  {
+                    "receiverWalletId" : 2,
+                    "amount" : 2000,
+                    "summary" : "적요"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1-money-charge1572558542'
+              examples:
+                money-api-test/send-money:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "accountId" : 1,
+                      "balance" : 1000
+                    }
+components:
+  schemas:
+    v1-money-charge1572558542:
+      required:
+      - accountId
+      - balance
+      - id
+      type: object
+      properties:
+        accountId:
+          type: number
+          description: 계정 아이디
+        balance:
+          type: number
+          description: 잔액
+        id:
+          type: number
+          description: 지갑 아이디
+    v1-money-charge-404147378:
+      required:
+      - amount
+      - summary
+      type: object
+      properties:
+        summary:
+          type: string
+          description: 적요
+        amount:
+          type: number
+          description: 금액
+    v1-money-send-339234514:
+      required:
+      - amount
+      - receiverWalletId
+      - summary
+      type: object
+      properties:
+        summary:
+          type: string
+          description: 적요
+        amount:
+          type: number
+          description: 금액
+        receiverWalletId:
+          type: number
+          description: 수취인 지갑 아이디
