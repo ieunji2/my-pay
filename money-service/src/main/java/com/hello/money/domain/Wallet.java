@@ -33,12 +33,14 @@ public class Wallet extends BaseEntity {
     this.balance = BigInteger.ZERO;
   }
 
-  public void addMoney(final BigInteger amount) {
+  public Wallet addMoney(final BigInteger amount) {
     this.balance = this.balance.add(amount);
+    return this;
   }
 
-  public void subtractMoney(final BigInteger amount) {
+  public Wallet subtractMoney(final BigInteger amount) {
     Assert.isTrue(this.balance.compareTo(amount) > 0, "잔액이 부족합니다.");
     this.balance = this.balance.subtract(amount);
+    return this;
   }
 }
