@@ -42,7 +42,7 @@ public class MoneyServiceImpl implements MoneyService {
       return distributedLockService.chargeMoneyWithLock(wallet.getId(), requestedTransaction);
     } catch (Exception e) {
       final Transaction failedTransaction = transactionService.getFailedTransaction(requestedTransaction);
-      throw new ChargeTransactionFailedException();
+      throw new ChargeTransactionFailedException(e.getMessage());
     }
   }
 
@@ -59,7 +59,7 @@ public class MoneyServiceImpl implements MoneyService {
     } catch (Exception e) {
       final Transaction senderFailedTransaction = transactionService.getFailedTransaction(senderRequestedTransaction);
       final Transaction receiverFailedTransaction = transactionService.getFailedTransaction(receiverRequestedTransaction);
-      throw new SendTransactionFailedException();
+      throw new SendTransactionFailedException(e.getMessage());
     }
   }
 
