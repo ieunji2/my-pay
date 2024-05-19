@@ -60,8 +60,10 @@ public class DistributedMultiLockAop {
 
   private RLock[] getLocks(final DistributedMultiLock distributedLock, final MethodSignature signature, final ProceedingJoinPoint joinPoint) {
     return Stream.of(distributedLock.keys())
-                 .map(key -> REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), key))
-                 .map(redissonClient::getLock)
+                 .map(key -> CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), key))
+                 .map(key -> Long.parseLong(String.valueOf(key)))
+                 .sorted()
+                 .map(key -> redissonClient.getLock(REDISSON_LOCK_PREFIX + key))
                  .toArray(RLock[]::new);
   }
 }
