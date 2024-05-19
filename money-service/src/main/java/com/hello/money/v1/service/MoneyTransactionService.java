@@ -40,7 +40,8 @@ public class MoneyTransactionService {
   }
 
   @Transactional
-  public Transaction executeCharge(final Wallet wallet, final Transaction transaction, final BigInteger amount) {
+  public Transaction executeCharge(final Wallet wallet, final Transaction transaction) {
+    final BigInteger amount = transaction.getAmount();
     walletPort.saveWallet(wallet.addMoney(amount));
     return transactionPort.saveTransaction(transaction.succeed());
   }
@@ -48,10 +49,11 @@ public class MoneyTransactionService {
   @Transactional
   public Transaction executeSend(
           final Wallet senderWallet,
-          final Transaction senderTransaction,
           final Wallet receiverWallet,
-          final Transaction receiverTransaction,
-          final BigInteger amount) {
+          final Transaction senderTransaction,
+          final Transaction receiverTransaction) {
+
+    final BigInteger amount = senderTransaction.getAmount();
 
     walletPort.saveWallet(receiverWallet.addMoney(amount));
     transactionPort.saveTransaction(receiverTransaction.succeed());
