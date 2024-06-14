@@ -51,30 +51,30 @@ class MoneyServiceWithLockTest {
 
   private static Stream<Arguments> chargeMoneyServiceDtoParam() {
     return Stream.of(
-//            arguments(
-//                    new ChargeMoneyServiceDto(1L, "이름", BigInteger.valueOf(3000), "적요"), 1000, 3000000),
+            arguments(
+                    new ChargeMoneyServiceDto(1L, "이름", BigInteger.valueOf(3000), "적요"), 1000, 3000000),
             arguments(
                     new ChargeMoneyServiceDto(1L, "이름", BigInteger.valueOf(3000), "적요"), 100, 300000));
   }
 
   private static Stream<Arguments> sendMoneyServiceDtoParam() {
     return Stream.of(
-//            arguments(
-//                    new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"), 1000, 0, 1000),
+            arguments(
+                    new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"), 1000, 0, 1000),
             arguments(
                     new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"), 100, 900, 100));
   }
 
   private static Stream<Arguments> chargeMoneyAndSendMoneyServiceDtoParam() {
     return Stream.of(
-//            arguments(
-//                    new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"),
-//                    new ChargeMoneyServiceDto(2L, "이름2", BigInteger.valueOf(3000), "적요"),
-//                    new SendMoneyServiceDto(3L, "이름", 1L, BigInteger.ONE, "적요"),
-//                    300,
-//                    3000,
-//                    303100,
-//                    2900),
+            arguments(
+                    new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"),
+                    new ChargeMoneyServiceDto(2L, "이름2", BigInteger.valueOf(3000), "적요"),
+                    new SendMoneyServiceDto(3L, "이름", 1L, BigInteger.ONE, "적요"),
+                    300,
+                    3000,
+                    303100,
+                    2900),
             arguments(
                     new SendMoneyServiceDto(1L, "이름", 2L, BigInteger.ONE, "적요"),
                     new ChargeMoneyServiceDto(2L, "이름2", BigInteger.valueOf(3000), "적요"),

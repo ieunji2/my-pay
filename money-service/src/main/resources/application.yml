@@ -23,9 +23,8 @@ spring:
       enabled: always
 
 logging.level:
-#  root: debug
   org.springframework.orm.jpa: debug
-  org.springframework.transaction.interceptor: trace
+#  org.springframework.transaction.interceptor: trace
   org.hibernate.SQL: debug
   #  org.hibernate.orm.jdbc.bind: trace
   #  org.hibernate.orm.jdbc.extract: trace

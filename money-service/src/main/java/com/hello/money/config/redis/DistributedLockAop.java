@@ -39,20 +39,19 @@ public class DistributedLockAop {
             distributedLock.key());
 
     final RLock lock = redissonClient.getLock(key);
-    log.info("{}:{} - 1. lock 생성", Thread.currentThread().getId(), lock.getName());
 
     try {
-      log.info("{}:{} - 2. lock 획득 시도", Thread.currentThread().getId(), lock.getName());
+      log.info("{}:{} - 1. lock 획득 시도", Thread.currentThread().getId(), lock.getName());
       if (!lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit())) {
         log.error("{}:{} - 99. lock 획득 실패", Thread.currentThread().getId(), lock.getName());
         throw new RedisLockAcquisitionFailedException("Failed to acquire lock");
       }
-      log.info("{}:{} - 3. lock 획득 성공", Thread.currentThread().getId(), lock.getName());
+      log.info("{}:{} - 2. lock 획득 성공", Thread.currentThread().getId(), lock.getName());
       return aopForTransaction.proceed(joinPoint);
     } finally {
       if (lock.isLocked() && lock.isHeldByCurrentThread()) {
         lock.unlock();
-        log.info("{}:{} - 4. lock 해제 성공", Thread.currentThread().getId(), lock.getName());
+        log.info("{}:{} - 3. lock 해제 성공", Thread.currentThread().getId(), lock.getName());
       }
     }
   }

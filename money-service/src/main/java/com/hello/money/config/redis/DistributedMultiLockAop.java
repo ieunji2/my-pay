@@ -38,20 +38,19 @@ public class DistributedMultiLockAop {
     final RLock[] locks = getLocks(distributedLock, signature, joinPoint);
 
     final RLock multiLock = redissonClient.getMultiLock(locks);
-    log.info("{}:{} - 1. multiLock 생성", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
 
     try {
-      log.info("{}:{} - 2. multiLock 획득 시도", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
+      log.info("{}:{} - 1. multiLock 획득 시도", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
       if (!multiLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit())) {
         log.error("{}:{} - 99. multiLock 획득 실패", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
         throw new RedisLockAcquisitionFailedException("Failed to acquire multi lock");
       }
-      log.info("{}:{} - 3. multiLock 획득 성공", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
+      log.info("{}:{} - 2. multiLock 획득 성공", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
       return aopForTransaction.proceed(joinPoint);
     } finally {
       try {
         multiLock.unlock();
-        log.info("{}:{} - 4. multiLock 해제 성공", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
+        log.info("{}:{} - 3. multiLock 해제 성공", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
       } catch (CompletionException e) {
         log.error("{}:{} - 98. multiLock 이미 해제 완료", Thread.currentThread().getId(), Stream.of(locks).map(RLock::getName).toList());
       }
