@@ -41,9 +41,7 @@ public class MoneyTransactionService {
 
   @Transactional
   public Transaction executeCharge(final Wallet wallet, final Transaction transaction) {
-    final BigInteger amount = transaction.getAmount();
-    walletPort.saveWallet(wallet.addMoney(amount));
-    return transactionPort.saveTransaction(transaction.succeed());
+    return executeTransaction(wallet, transaction, Wallet::addMoney);
   }
 
   @Transactional
@@ -53,12 +51,13 @@ public class MoneyTransactionService {
           final Transaction senderTransaction,
           final Transaction receiverTransaction) {
 
-    final BigInteger amount = senderTransaction.getAmount();
+    executeTransaction(receiverWallet, receiverTransaction, Wallet::addMoney);
+    return executeTransaction(senderWallet, senderTransaction, Wallet::subtractMoney);
+  }
 
-    walletPort.saveWallet(receiverWallet.addMoney(amount));
-    transactionPort.saveTransaction(receiverTransaction.succeed());
-
-    walletPort.saveWallet(senderWallet.subtractMoney(amount));
-    return transactionPort.saveTransaction(senderTransaction.succeed());
+  private Transaction executeTransaction(final Wallet wallet, final Transaction transaction, final ChangeWalletBalance change) {
+    final BigInteger amount = transaction.getAmount();
+    walletPort.saveWallet(change.apply(wallet, amount));
+    return transactionPort.saveTransaction(transaction.succeed());
   }
 }
