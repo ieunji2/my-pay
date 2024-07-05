@@ -23,3 +23,9 @@ logging.level:
 
 app:
   account-service-url: http://localhost:9000
+
+distributed:
+  lock:
+    wait-time: 30
+    lease-time: 5
+    time-unit: SECONDS

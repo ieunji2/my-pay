@@ -22,9 +22,15 @@ spring:
     ansi:
       enabled: always
 
+distributed:
+  lock:
+    wait-time: 30
+    lease-time: 5
+    time-unit: SECONDS
+
 logging.level:
   org.springframework.orm.jpa: debug
-#  org.springframework.transaction.interceptor: trace
+  #  org.springframework.transaction.interceptor: trace
   org.hibernate.SQL: debug
   #  org.hibernate.orm.jdbc.bind: trace
   #  org.hibernate.orm.jdbc.extract: trace
