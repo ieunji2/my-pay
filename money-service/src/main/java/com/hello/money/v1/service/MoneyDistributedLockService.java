@@ -1,7 +1,6 @@
 package com.hello.money.v1.service;
 
-import com.hello.money.config.redis.DistributedLock;
-import com.hello.money.config.redis.DistributedMultiLock;
+import com.hello.money.config.redis.CustomDistributedLock;
 import com.hello.money.domain.Transaction;
 import com.hello.money.domain.Wallet;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ public class MoneyDistributedLockService {
   private final WalletPort walletPort;
   private final MoneyTransactionService transactionService;
 
-  @DistributedLock(key = "#walletId")
+  @CustomDistributedLock(keys = {"#walletId"})
   public Wallet chargeMoneyWithLock(final Long walletId, final Transaction transaction) {
 
     final Wallet wallet = walletPort.findWalletById(walletId);
@@ -24,7 +23,7 @@ public class MoneyDistributedLockService {
     return successfulTransaction.getWallet();
   }
 
-  @DistributedMultiLock(keys = {"#senderWalletId", "#receiverWalletId"})
+  @CustomDistributedLock(keys = {"#senderWalletId", "#receiverWalletId"})
   public Wallet sendMoneyWithLock(final Long senderWalletId, final Long receiverWalletId, final Transaction senderTransaction, final Transaction receiverTransaction) {
 
     final Wallet senderWallet = walletPort.findWalletById(senderWalletId);
