@@ -51,8 +51,10 @@ public class MoneyTransactionService {
           final Transaction senderTransaction,
           final Transaction receiverTransaction) {
 
-    executeTransaction(receiverWallet, receiverTransaction, Wallet::addMoney);
-    return executeTransaction(senderWallet, senderTransaction, Wallet::subtractMoney);
+    final Transaction executedReceiverTransaction = executeTransaction(receiverWallet, receiverTransaction, Wallet::addMoney);
+    final Transaction executedSenderTransaction = executeTransaction(senderWallet, senderTransaction, Wallet::subtractMoney);
+
+    return executedSenderTransaction;
   }
 
   private Transaction executeTransaction(final Wallet wallet, final Transaction transaction, final ChangeWalletBalance change) {
